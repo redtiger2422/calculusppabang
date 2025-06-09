@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>타요 & 티니핑 수학 모험</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(120deg, #a1e0ff 40%, #f9e0ff 100%);
+      box-sizing: border-box;
+      font-family: 'Spoqa Han Sans Neo', 'Noto Sans KR', Arial, sans-serif;
+    }
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    #gameBox {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      box-shadow: 0 6px 40px rgba(20,60,160,0.17);
+      padding: 32px 24px 20px 24px;
+      max-width: 420px;
+      min-width: 330px;
+      width: 90vw;
+      margin: 0 auto;
+      position: relative;
+      text-align: center;
+    }
+    #logoImages {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .logo-char {
+      height: 60px;
+      border-radius: 10px;
+      object-fit: contain;
+      box-shadow: 0 3px 15px rgba(30,70,180,0.11);
+      background: #eaf6ff;
+      padding: 3px;
+    }
+    #adventureMsg {
+      color: #3186eb;
+      font-size: 1.32em;
+      font-weight: bold;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 5px #fff6;
+      animation: bounce 2.2s infinite;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      15% { transform: translateY(-6px); }
+      30% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+      70% { transform: translateY(0); }
+    }
+    label, select, button, input {
+      font-size: 1.15em;
+    }
+    select, input {
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: 1.2px solid #aad3fd;
+      margin-bottom: 12px;
+      width: 70%;
+      max-width: 200px;
+      background: #f5fbff;
+    }
+    button {
+      margin-top: 5px;
+      background: #66b5f6;
+      color: white;
+      font-weight: bold;
+      padding: 8px 24px;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      box-shadow: 0 2px 7px #88c6fc55;
+      transition: background 0.2s;
+    }
+    button:hover { background: #3d97e0; }
+    #questionNum {
+      font-size: 1.07em;
+      color: #9791cf;
+      margin-bottom: 5px;
+    }
+    #questionText {
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #3677b6;
+      margin-bottom: 18px;
+      margin-top: 0;
+    }
+    #answerInput {
+      text-align: center;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    #feedback {
+      min-height: 1.1em;
+      font-size: 1.13em;
+      font-weight: 500;
+      margin: 7px 0 0 0;
+      color: #fa7e2e;
+    }
+    #resultSection {
+      margin: 0 0 10px 0;
+    }
+    #resultSection h2 {
+      color: #3a7fbc;
+      margin-bottom: 5px;
+    }
+    #resultMsg {
+      font-size: 1.14em;
+      margin: 12px 0 8px 0;
+      color: #6864e2;
+    }
+    #madeBy {
+      font-size: 0.99em;
+      color: #aaa;
+      margin-top: 18px;
+      letter-spacing: 1.5px;
+      text-align: center;
+      width: 100%;
+      position: relative;
+    }
+    @media (max-width: 500px) {
+      #gameBox {
+        min-width: unset;
+        padding: 8vw 2vw 5vw 2vw;
+      }
+      .logo-char {
+        height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="gameBox">
+    <div id="logoImages">
+      <img src="티니핑공주.png" alt="티니핑공주" class="logo-char">
+      <img src="타요자동차.png" alt="타요자동차" class="logo-char">
+    </div>
+    <div id="adventureMsg">💡 신나는 타요와 티니핑의 수학 모험! 지금 떠나요! 💡</div>
+
+    <!-- 나이 선택 화면 -->
+    <div id="ageSection">
+      <label for="ageSelect">나이를 선택하세요 (5세~13세):</label><br>
+      <select id="ageSelect">
+        <option value="">-- 나이 선택 --</option>
+        <option value="5">5세</option><option value="6">6세</option><option value="7">7세</option>
+        <option value="8">8세</option><option value="9">9세</option><option value="10">10세</option>
+        <option value="11">11세</option><option value="12">12세</option><option value="13">13세</option>
+      </select>
+      <br><button id="startQuizBtn">모험 시작!</button>
+    </div>
+
+    <!-- 문제 퀴즈 화면 -->
+    <div id="quizSection" style="display:none;">
+      <div id="questionNum"></div>
+      <div id="questionText"></div>
+      <input id="answerInput" type="text" autocomplete="off" placeholder="정답을 써주세요!">
+      <br><button id="submitAnswerBtn">정답 확인</button>
+      <div id="feedback"></div>
+    </div>
+
+    <!-- 결과 화면 -->
+    <div id="resultSection" style="display:none;">
+      <h2>🎉 모험 완료! 🎉</h2>
+      <div>맞춘 개수: <span id="correctCount"></span> / <span id="totalCount"></span></div>
+      <div>정답률: <span id="accuracy"></span>%</div>
+      <div id="resultMsg"></div>
+      <button id="retryBtn" style="display:none;">재도전하기</button>
+      <button id="restartBtn">처음으로</button>
+    </div>
+    <div id="madeBy">Made by 적호약사</div>
+  </div>
+
+  <script>
+    let quiz = {
+      age: null,
+      questions: [],
+      current: 0,
+      correct: 0
+    };
+    const feedbacks = {
+      correct: [
+        '정답! 멋져요 🚍',
+        '맞았어요! 👑',
+        '대단해요! 타요처럼 힘차게!',
+        '티니핑처럼 반짝반짝!'
+      ],
+      wrong: [
+        '아쉽지만 다음 문제도 힘내요!',
+        '조금만 더 집중! 💪',
+        '괜찮아요, 포기하지 마요!',
+        '조금만 더 연습하면 금방 맞출 수 있어요!'
+      ]
+    };
+    function getResultMsg(rate) {
+      if (rate >= 90) return '우수해요! 수학천재! 👑🦖';
+      if (rate >= 80) return '조금만 더 하면 90%도 가능해요! 화이팅! 🌈';
+      return '70%가 넘을 때까지 조금 더 연습해요! 재도전 Go! 🚍👑';
+    }
+    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function makeQuestions(age) {
+      const arr = [];
+      for (let i=0; i<30; i++) {
+        let q = '', a = 0;
+        if (age <= 6) {
+          if (Math.random()<0.5) { let x=randInt(1,10),y=randInt(1,10); q=`${x} + ${y}`; a=x+y; }
+          else { let x=randInt(1,10),y=randInt(1,10); let max=Math.max(x,y),min=Math.min(x,y); q=`${max} - ${min}`; a=max-min; }
+        } else if (age<=8) {
+          let t=Math.random();
+          if (t<0.4) { let x=randInt(0,20),y=randInt(0,20-x); q=`${x} + ${y}`; a=x+y; }
+          else if (t<0.8) { let x=randInt(0,20),y=randInt(0,x); q=`${x} - ${y}`; a=x-y; }
+          else { let x=randInt(1,5),y=randInt(1,5); q=`${x} × ${y}`; a=x*y; }
+        } else if (age<=10) {
+          let t=Math.random();
+          if (t<0.25) { let x=randInt(0,10),y=randInt(0,10); q=`${x} + ${y}`; a=x+y; }
+          else if (t<0.5) { let x=randInt(0,10),y=randInt(0,10),mx=Math.max(x,y),mn=Math.min(x,y); q=`${mx} - ${mn}`; a=mx-mn; }
+          else if (t<0.75) { let x=randInt(1,10),y=randInt(1,10); q=`${x} × ${y}`; a=x*y; }
+          else { let x=randInt(1,10),y=randInt(1,10),p=x*y; q=`${p} ÷ ${x}`; a=p/x; }
+        } else {
+          let two=Math.random()<0.3;
+          if (!two) {
+            let t=Math.random();
+            if (t<0.25) { let x=randInt(0,50),y=randInt(0,50); q=`${x} + ${y}`; a=x+y; }
+            else if (t<0.5) { let x=randInt(0,50),y=randInt(0,x); q=`${x} - ${y}`; a=x-y; }
+            else if (t<0.75) { let x=randInt(1,20),y=randInt(1,20); q=`${x} × ${y}`; a=x*y; }
+            else { let x=randInt(1,20),y=randInt(1,20),p=x*y; q=`${p} ÷ ${x}`; a=p/x; }
+          } else {
+            let pat=randInt(1,6); let x,y,z;
+            switch(pat) {
+              case 1: x=randInt(1,20),y=randInt(1,20),z=randInt(1,10); q=`(${x} + ${y}) × ${z}`; a=(x+y)*z; break;
+              case 2: x=randInt(1,10),y=randInt(1,20),z=randInt(1,20); q=`${x} × (${y} + ${z})`; a=x*(y+z); break;
+              case 3: x=randInt(1,50),y=randInt(1,x),z=randInt(1,50); q=`(${x} - ${y}) + ${z}`; a=(x-y)+z; break;
+              case 4: x=randInt(1,50),y=randInt(1,50),z=randInt(1,x+y); q=`(${x} + ${y}) - ${z}`; a=(x+y)-z; break;
+              case 5: x=randInt(1,20),y=randInt(1,10),z=randInt(1,10); q=`${x} + ${y} × ${z}`; a=x+(y*z); break;
+              case 6: x=randInt(1,20),y=randInt(1,10),z=randInt(1,x*y); q=`${x} × ${y} - ${z}`; a=(x*y)-z; break;
+            }
+          }
+        }
+        arr.push({q:q, a:a});
+      }
+      return arr.sort(()=>Math.random()-0.5);
+    }
+    const $ = sel => document.querySelector(sel);
+    const ageSection = $('#ageSection');
+    const quizSection = $('#quizSection');
+    const resultSection = $('#resultSection');
+    const feedbackDiv = $('#feedback');
+
+    $('#startQuizBtn').onclick = function() {
+      const age = parseInt($('#ageSelect').value);
+      if (!age || age<5 || age>13) { alert('5~13세 나이만 선택 가능합니다!'); return; }
+      quiz.age = age;
+      quiz.questions = makeQuestions(age);
+      quiz.current = 0;
+      quiz.correct = 0;
+      ageSection.style.display='none';
+      quizSection.style.display='block';
+      resultSection.style.display='none';
+      showQuestion();
+    };
+    function showQuestion() {
+      let qinfo = quiz.questions[quiz.current];
+      $('#questionNum').textContent = `문제 ${quiz.current+1} / 30`;
+      $('#questionText').textContent = qinfo.q+' = ?';
+      $('#answerInput').value = '';
+      feedbackDiv.textContent = '';
+      $('#answerInput').focus();
+      $('#submitAnswerBtn').textContent = '정답 확인';
+      $('#submitAnswerBtn').disabled = false;
+    }
+    $('#submitAnswerBtn').onclick = function() {
+      let userAns = $('#answerInput').value.trim();
+      let q = quiz.questions[quiz.current];
+      if(userAns==="") { feedbackDiv.textContent = "답을 입력해 주세요!"; return; }
+      if(Number(userAns) === q.a) {
+        quiz.correct++;
+        feedbackDiv.textContent = feedbacks.correct[randInt(0, feedbacks.correct.length-1)];
+      } else {
+        feedbackDiv.textContent = `${feedbacks.wrong[randInt(0,feedbacks.wrong.length-1)]} (정답: ${q.a})`;
+      }
+      $('#submitAnswerBtn').textContent = '다음 문제';
+      $('#submitAnswerBtn').disabled = true;
+      setTimeout(()=>{
+        quiz.current++;
+        if (quiz.current >= 30) finishQuiz();
+        else {
+          showQuestion();
+          $('#submitAnswerBtn').disabled = false;
+        }
+      }, 1200);
+    };
+    $('#answerInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') $('#submitAnswerBtn').click();
+    });
+    function finishQuiz() {
+      quizSection.style.display='none';
+      resultSection.style.display='block';
+      $('#correctCount').textContent = quiz.correct;
+      $('#totalCount').textContent = '30';
+      let rate = Math.round(quiz.correct/30*100);
+      $('#accuracy').textContent = rate;
+      $('#resultMsg').textContent = getResultMsg(rate);
+      $('#retryBtn').style.display = (rate<70) ? 'inline-block':'none';
+    }
+    $('#retryBtn').onclick = function() {
+      quiz.current = 0;
+      quiz.correct = 0;
+      quiz.questions = makeQuestions(quiz.age);
+      ageSection.style.display='none';
+      quizSection.style.display='block';
+      resultSection.style.display='none';
+      showQuestion();
+    };
+    $('#restartBtn').onclick = function() {
+      location.reload();
+    };
+  </script>
+</body>
+</html>
