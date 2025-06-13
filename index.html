@@ -2,315 +2,157 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>타요와 티니핑의 수학 퀴즈</title>
+  <title>모험 퀴즈 게임</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      text-align: center;
-      font-family: 'Arial', sans-serif;
-      background-color: #e0f7fa; /* 연한 파랑 배경 */
-      color: #444;
-    }
-    #header {
-      position: relative;
-      background-color: #ffe0f0; /* 연한 분홍 */
-      padding: 10px;
-      overflow: auto;
-    }
-    /* 상단 캐릭터 이미지와 제목 */
-    #header img {
-      height: 100px;
-    }
-    #header h1 {
-      color: #ff4081;
-      margin: 0;
-      line-height: 100px;
-      display: inline-block;
-    }
-    /* 음소거 버튼 위치 */
-    #mute-button {
-      font-size: 24px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      position: absolute;
+    /* 배경 음악 음소거 토글 버튼 스타일 */
+    #muteBtn {
+      position: fixed;
       top: 10px;
       right: 10px;
-    }
-    /* 화면별 패딩 및 헤딩 색상 */
-    #start-screen, #quiz-screen, #end-screen {
-      padding: 20px;
-    }
-    #start-screen h2, #quiz-screen h2, #end-screen h2 {
-      color: #ff4081;
-    }
-    /* 버튼 공통 스타일 */
-    .btn {
-      padding: 10px 20px;
-      font-size: 16px;
-      margin: 5px;
+      font-size: 24px;
+      background: none;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
     }
-    /* 시작/재도전/처음으로 버튼 색상 */
-    #start-button, #retry-button, #home-button {
-      background-color: #ffcc80;
-    }
-    /* 답안 버튼 스타일 */
-    .answer-button {
-      background-color: #ffab91;
-      display: block;
-      margin: 10px auto;
-    }
-    .answer-button:hover {
-      background-color: #ff8a65;
-    }
-    /* 문제 텍스트와 피드백 */
-    #question-text {
-      font-size: 24px;
-      margin: 20px 0;
-    }
-    #feedback {
-      font-size: 18px;
-      margin: 15px 0;
-      height: 24px;
+    /* 퀴즈 화면 숨김 */
+    #quizScreen {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <!-- 상단: 타요와 티니핑 이미지, 제목, 음소거 버튼 -->
-  <div id="header">
-    <img src="타요자동차.png" alt="타요" style="float:left;">
-    <img src="티니핑공주.png" alt="티니핑" style="float:right;">
-    <h1>수학 퀴즈 모험</h1>
-    <button id="mute-button">🔊</button>
-  </div>
+  <!-- 배경 음악 (자동 재생, 무한 반복) -->
+  <audio id="bgMusic" src="tayo1.mp3" loop autoplay></audio>
+  <!-- 박수 효과음 -->
+  <audio id="clapSound" src="applaus11.mp3"></audio>
 
-  <!-- 시작 화면: 나이 선택 -->
-  <div id="start-screen">
-    <h2>나이를 선택하고 모험을 시작해요!</h2>
-    <label for="age-select">나이:</label>
-    <select id="age-select">
-      <option value="5">5세</option>
-      <option value="6">6세</option>
-      <option value="7">7세</option>
-      <option value="8">8세</option>
-      <option value="9">9세</option>
-      <option value="10">10세</option>
-      <option value="11">11세</option>
-      <option value="12">12세</option>
+  <!-- 상단 우측 음소거/소리 토글 버튼 -->
+  <button id="muteBtn">🔊</button>
+
+  <!-- 시작 화면 -->
+  <div id="startScreen">
+    <h1>모험 시작하기</h1>
+    <label for="ageSelect">나이를 선택하세요: </label>
+    <select id="ageSelect">
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
     </select>
-    <br><br>
-    <button id="start-button" class="btn">모험 시작</button>
+    <button id="startBtn">모험 시작</button>
   </div>
 
-  <!-- 퀴즈 화면: 문제와 답안 -->
-  <div id="quiz-screen" style="display:none;">
-    <h2 id="question-text">문제</h2>
-    <div id="answers"></div>
+  <!-- 퀴즈 화면 -->
+  <div id="quizScreen">
+    <h2 id="questionText"></h2>
+    <input type="text" id="answerInput" placeholder="답을 입력하세요" />
+    <button id="submitAnswer">제출</button>
     <p id="feedback"></p>
-    <p>문제 <span id="current-question">0</span> / 20</p>
   </div>
 
-  <!-- 종료 화면: 점수 및 격려 메시지 -->
-  <div id="end-screen" style="display:none;">
-    <h2>모험이 끝났어요!</h2>
-    <p id="final-score"></p>
-    <p id="encouragement"></p>
-    <button id="retry-button" class="btn">재도전</button>
-    <button id="home-button" class="btn">처음으로</button>
-  </div>
+  <script>
+    // 문제 세트 예시 (나이에 따라 질문과 정답 설정)
+    const questionSets = {
+      '5': [
+        { q: '1+1 = ?', a: '2' },
+        { q: '2+3 = ?', a: '5' },
+        { q: '5-2 = ?', a: '3' }
+      ],
+      '6': [
+        { q: '3+4 = ?', a: '7' },
+        { q: '6-2 = ?', a: '4' },
+        { q: '5+5 = ?', a: '10' }
+      ],
+      '7': [
+        { q: '3×2 = ?', a: '6' },
+        { q: '7-2 = ?', a: '5' },
+        { q: '4×2 = ?', a: '8' }
+      ],
+      '8': [
+        { q: '4×2 = ?', a: '8' },
+        { q: '10-5 = ?', a: '5' },
+        { q: '6+7 = ?', a: '13' }
+      ],
+      '9': [
+        { q: '3×3 = ?', a: '9' },
+        { q: '12-4 = ?', a: '8' },
+        { q: '5×5 = ?', a: '25' }
+      ],
+      '10': [
+        { q: '5×3 = ?', a: '15' },
+        { q: '20-9 = ?', a: '11' },
+        { q: '7+8 = ?', a: '15' }
+      ]
+    };
 
-  <!-- 배경음악과 효과음 (같은 폴더 내 파일) -->
-  <audio id="bgm" src="tayo1.mp3" loop autoplay></audio>
-  <audio id="applause" src="applaus11.mp3"></audio>
+    let currentQuestions = [];
+    let currentIndex = 0;
 
-<script>
-let age = 5;
-let totalQuestions = 20;
-let currentQuestion = 0;
-let score = 0;
-let questions = [];
-let applauseCooldown = false;
+    // 시작 버튼 이벤트 핸들러
+    document.getElementById('startBtn').addEventListener('click', startGame);
+    // 음소거 토글 버튼 이벤트 핸들러
+    document.getElementById('muteBtn').addEventListener('click', function() {
+      const bgMusic = document.getElementById('bgMusic');
+      bgMusic.muted = !bgMusic.muted;
+      this.textContent = bgMusic.muted ? '🔇' : '🔊';
+    });
+    // 정답 제출 버튼 이벤트 핸들러
+    document.getElementById('submitAnswer').addEventListener('click', checkAnswer);
 
-// 타요/티니핑 스타일 칭찬 문구 목록
-const praises = [
-  "와~ 정말 멋져요! 🤩",
-  "정답이에요! 짝짝짝 👏",
-  "따르릉! 정답입니다요! 🚌🎉",
-  "오예! 티니핑도 뿌듯해요! 👑✨",
-  "대단해요! 모두가 놀랐어요! 🌟",
-  "우와~ 천재인가 봐요! 🌈"
-];
-
-// 버튼 이벤트 연결
-document.getElementById('start-button').addEventListener('click', startQuiz);
-document.getElementById('retry-button').addEventListener('click', retryQuiz);
-document.getElementById('home-button').addEventListener('click', goHome);
-document.getElementById('mute-button').addEventListener('click', toggleMute);
-
-// 퀴즈 시작
-function startQuiz() {
-  age = parseInt(document.getElementById('age-select').value);
-  document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('quiz-screen').style.display = 'block';
-  currentQuestion = 0;
-  score = 0;
-  document.getElementById('feedback').textContent = '';
-  generateQuestions();
-  showQuestion();
-}
-
-// 재도전: 동일 연령으로 다시 시작
-function retryQuiz() {
-  currentQuestion = 0;
-  score = 0;
-  document.getElementById('final-score').textContent = '';
-  document.getElementById('encouragement').textContent = '';
-  document.getElementById('end-screen').style.display = 'none';
-  document.getElementById('quiz-screen').style.display = 'block';
-  document.getElementById('feedback').textContent = '';
-  generateQuestions();
-  showQuestion();
-}
-
-// 처음으로: 연령 선택 화면으로 돌아감
-function goHome() {
-  document.getElementById('end-screen').style.display = 'none';
-  document.getElementById('start-screen').style.display = 'block';
-}
-
-// 20문제 생성
-function generateQuestions() {
-  questions = [];
-  for (let i = 0; i < totalQuestions; i++) {
-    questions.push(generateQuestion());
-  }
-}
-
-// 랜덤 문제 생성 (연령에 따라 사칙연산 포함)
-function generateQuestion() {
-  let num1, num2, operator, questionText, correct;
-  const ops = ['+', '-'];
-  if (age >= 8) {
-    ops.push('×');
-  }
-  operator = ops[Math.floor(Math.random() * ops.length)];
-  if (operator === '+') {
-    num1 = Math.floor(Math.random() * 10) + 1;
-    num2 = Math.floor(Math.random() * 10) + 1;
-    correct = num1 + num2;
-  } else if (operator === '-') {
-    num1 = Math.floor(Math.random() * 10) + 1;
-    num2 = Math.floor(Math.random() * num1) + 1; // 음수 방지
-    correct = num1 - num2;
-  } else { // '×'
-    num1 = Math.floor(Math.random() * 5) + 1;
-    num2 = Math.floor(Math.random() * 5) + 1;
-    correct = num1 * num2;
-  }
-  questionText = `${num1} ${operator} ${num2} = ?`;
-  // 정답과 오답 3개 생성
-  let options = [correct];
-  while (options.length < 4) {
-    let wrong;
-    if (operator === '×') {
-      wrong = correct + (Math.floor(Math.random() * 5) - 2);
-    } else {
-      wrong = correct + (Math.floor(Math.random() * 7) - 3);
+    function startGame() {
+      // 선택한 나이 기반으로 문제 세트 설정
+      const age = document.getElementById('ageSelect').value;
+      currentQuestions = questionSets[age] || [];
+      // 퀴즈 화면으로 전환
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('quizScreen').style.display = 'block';
+      currentIndex = 0;
+      document.getElementById('feedback').textContent = '';
+      showQuestion();
     }
-    if (wrong < 0) wrong = Math.abs(wrong) + 1;
-    if (!options.includes(wrong) && wrong !== correct) {
-      options.push(wrong);
+
+    function showQuestion() {
+      if (currentIndex < currentQuestions.length) {
+        const qObj = currentQuestions[currentIndex];
+        document.getElementById('questionText').textContent = qObj.q;
+        document.getElementById('answerInput').value = '';
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('answerInput').focus();
+        document.getElementById('submitAnswer').disabled = false;
+      } else {
+        // 모든 문제 완료
+        document.getElementById('questionText').textContent = '모든 문제를 맞추셨습니다!';
+        document.getElementById('submitAnswer').disabled = true;
+      }
     }
-  }
-  // 보기 순서 섞기
-  options.sort(() => Math.random() - 0.5);
-  return {questionText, correct, options};
-}
 
-// 화면에 문제 표시
-function showQuestion() {
-  if (currentQuestion >= totalQuestions) {
-    endQuiz();
-    return;
-  }
-  const q = questions[currentQuestion];
-  document.getElementById('current-question').textContent = currentQuestion + 1;
-  document.getElementById('question-text').textContent = q.questionText;
-  const answersDiv = document.getElementById('answers');
-  answersDiv.innerHTML = '';
-  q.options.forEach(option => {
-    const btn = document.createElement('button');
-    btn.textContent = option;
-    btn.className = 'btn answer-button';
-    btn.onclick = () => checkAnswer(option, btn);
-    answersDiv.appendChild(btn);
-  });
-}
+    function checkAnswer() {
+      const answerInput = document.getElementById('answerInput');
+      const feedback = document.getElementById('feedback');
+      const userAnswer = answerInput.value.trim();
+      if (!userAnswer) return;
+      const correctAnswer = currentQuestions[currentIndex].a;
+      if (userAnswer === correctAnswer) {
+        feedback.textContent = '정답!';
+        playClapSound();
+        currentIndex++;
+        // 다음 문제로 전환
+        setTimeout(showQuestion, 1000);
+      } else {
+        feedback.textContent = '틀렸습니다. 다시 시도해보세요.';
+      }
+    }
 
-// 사용자가 답안 선택 시
-function checkAnswer(selected, btn) {
-  const q = questions[currentQuestion];
-  const feedback = document.getElementById('feedback');
-  // 모든 답안 버튼 비활성화
-  const buttons = document.querySelectorAll('.answer-button');
-  buttons.forEach(b => b.disabled = true);
-
-  if (selected === q.correct) {
-    score++;
-    feedback.textContent = praises[Math.floor(Math.random() * praises.length)];
-    playApplause(); // 정답 효과음
-    btn.style.backgroundColor = '#a5d6a7'; // 정답 시 초록
-  } else {
-    feedback.textContent = "아쉽지만 틀렸어요~ 😢";
-    btn.style.backgroundColor = '#ef9a9a'; // 오답 시 빨강
-  }
-  currentQuestion++;
-  // 다음 문제로 이동 (0.8초 후)
-  setTimeout(showQuestion, 800);
-}
-
-// 퀴즈 종료 처리
-function endQuiz() {
-  document.getElementById('quiz-screen').style.display = 'none';
-  document.getElementById('end-screen').style.display = 'block';
-  document.getElementById('final-score').textContent = `점수: ${score} / ${totalQuestions}`;
-  const encouragement = document.getElementById('encouragement');
-  if (score === totalQuestions) {
-    encouragement.textContent = "모든 문제를 맞혔어요! 정말 최고에요! 🌟";
-  } else if (score > totalQuestions * 0.7) {
-    encouragement.textContent = "정말 잘했어요! 조금만 더 하면 만점이에요! 😉";
-  } else if (score > totalQuestions * 0.4) {
-    encouragement.textContent = "좋은 도전이었어요! 다음에 다시 해봐요~ 😊";
-  } else {
-    encouragement.textContent = "잘했어요! 다음엔 더 잘할 수 있을거예요! 💪";
-  }
-}
-
-// 음소거 토글
-function toggleMute() {
-  const bgm = document.getElementById('bgm');
-  bgm.muted = !bgm.muted;
-  document.getElementById('mute-button').textContent = bgm.muted ? '🔇' : '🔊';
-}
-
-// 박수 소리 재생 (1.5초 쿨타임)
-function playApplause() {
-  const applause = document.getElementById('applause');
-  if (!applauseCooldown) {
-    applause.play();
-    applauseCooldown = true;
-    setTimeout(() => { applauseCooldown = false; }, 1500);
-  }
-}
-
-// 로드 시 배경음악 볼륨 조정
-window.addEventListener('load', () => {
-  document.getElementById('bgm').volume = 0.5;
-});
-</script>
+    let lastClapTime = 0;
+    function playClapSound() {
+      const now = Date.now();
+      if (now - lastClapTime > 1500) {
+        document.getElementById('clapSound').play();
+        lastClapTime = now;
+      }
+    }
+  </script>
 </body>
 </html>
