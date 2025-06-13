@@ -213,10 +213,9 @@
     let quiz = { age: null, questions: [], current: 0, correct: 0 };
     let applauseCooldown = false;
 
-    // 피드백 문구 (예시)
     const feedbacks = {
       correct: [
-        '정답! 멋져요 🚍', '맞았어요! 👑', '대단해요! 타요처럼 힘차게!',
+        '정답! 멋져요 🚍', '맞았어요! 👑', '대단해요! 타요처럼 힘차게!', '혹시...멘사!?' ,
         '티니핑처럼 반짝반짝!', '정말 잘했어요!', '최고예요!', '환상적이에요!', '훌륭해요!'
       ],
       wrong: [
@@ -272,7 +271,6 @@
       return arr.sort(()=>Math.random()-0.5);
     }
 
-    // '모험 시작' 버튼
     document.getElementById('startQuizBtn').onclick = function() {
       const age = parseInt(document.getElementById('ageSelect').value);
       if (!age || age<5 || age>13) { alert('5~13세 나이만 선택 가능합니다!'); return; }
@@ -289,7 +287,6 @@
       if (bgm.paused) bgm.play();
     };
 
-    // 문제 보여주기
     function showQuestion() {
       let qinfo = quiz.questions[quiz.current];
       document.getElementById('questionNum').textContent = `문제 ${quiz.current+1} / 20`;
@@ -300,7 +297,6 @@
       document.getElementById('submitAnswerBtn').textContent = '정답 확인';
       document.getElementById('submitAnswerBtn').disabled = false;
     }
-    // 정답 확인 버튼
     document.getElementById('submitAnswerBtn').onclick = function() {
       let userAns = document.getElementById('answerInput').value.trim();
       let q = quiz.questions[quiz.current];
@@ -308,7 +304,6 @@
       if(Number(userAns) === q.a) {
         quiz.correct++;
         document.getElementById('feedback').textContent = feedbacks.correct[randInt(0, feedbacks.correct.length-1)];
-        // 박수 효과음
         if (!applauseCooldown) {
           document.getElementById('applauseSound').currentTime = 0;
           document.getElementById('applauseSound').play();
@@ -329,7 +324,6 @@
         }
       }, 1200);
     };
-    // 엔터키로 정답 제출
     document.getElementById('answerInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') document.getElementById('submitAnswerBtn').click();
     });
@@ -344,7 +338,6 @@
       document.getElementById('resultMsg').textContent = getResultMsg(rate);
       document.getElementById('retryBtn').style.display = (rate<70) ? 'inline-block':'none';
     }
-    // 재도전
     document.getElementById('retryBtn').onclick = function() {
       quiz.current = 0;
       quiz.correct = 0;
@@ -354,19 +347,16 @@
       document.getElementById('resultSection').style.display='none';
       showQuestion();
     };
-    // 처음으로
     document.getElementById('restartBtn').onclick = function() {
       location.reload();
     };
 
-    // 배경음악 음소거 버튼
     document.getElementById('muteBtn').onclick = function() {
       const bgm = document.getElementById('bgMusic');
       bgm.muted = !bgm.muted;
       this.textContent = bgm.muted ? '🔇' : '🔊';
     };
 
-    // 볼륨 적정값
     window.onload = function() {
       document.getElementById('bgMusic').volume = 0.4;
     };
