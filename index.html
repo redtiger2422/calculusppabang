@@ -135,6 +135,19 @@
       width: 100%;
       position: relative;
     }
+    #muteBtn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.45em;
+      cursor: pointer;
+      z-index: 99;
+      color: #3186eb;
+      user-select: none;
+      padding: 0;
+    }
     @media (max-width: 500px) {
       #gameBox {
         min-width: unset;
@@ -143,11 +156,16 @@
       .logo-char {
         height: 44px;
       }
+      #muteBtn {
+        right: 10px;
+        top: 8px;
+      }
     }
   </style>
 </head>
 <body>
   <div id="gameBox">
+    <button id="muteBtn" title="음소거 전환">🔊</button>
     <div id="logoImages">
       <img src="티니핑공주.png" alt="티니핑공주" class="logo-char">
       <img src="타요자동차.png" alt="타요자동차" class="logo-char">
@@ -156,7 +174,6 @@
       <div>💡 신나는 타요와 티니핑의 수학 모험!💡</div>
       <div>🚘 지금 떠나요! 🚘</div>
     </div>
-
     <!-- 나이 선택 화면 -->
     <div id="ageSection">
       <label for="ageSelect">나이를 선택하세요 (5세~13세):</label><br>
@@ -168,7 +185,6 @@
       </select>
       <br><button id="startQuizBtn">모험 시작!</button>
     </div>
-
     <!-- 문제 퀴즈 화면 -->
     <div id="quizSection" style="display:none;">
       <div id="questionNum"></div>
@@ -177,7 +193,6 @@
       <br><button id="submitAnswerBtn">정답 확인</button>
       <div id="feedback"></div>
     </div>
-
     <!-- 결과 화면 -->
     <div id="resultSection" style="display:none;">
       <h2>🎉 모험 완료! 🎉</h2>
@@ -190,27 +205,22 @@
     <div id="madeBy">Made by 적호약사</div>
   </div>
 
-  <!-- 박수 효과음 (3초, 페이드인/아웃) -->
-  <audio id="applauseSound" src="박수_trimmed_fade.mp3" preload="auto"></audio>
+  <!-- 배경 음악, 효과음 -->
+  <audio id="bgMusic" src="tayo1.mp3" loop autoplay></audio>
+  <audio id="applauseSound" src="applaus11.mp3" preload="auto"></audio>
 
   <script>
     let quiz = { age: null, questions: [], current: 0, correct: 0 };
+    let applauseCooldown = false;
+
+    // 피드백 문구 (예시)
     const feedbacks = {
       correct: [
-        '정답! 멋져요 🚍',
-        '맞았어요! 👑',
-        '대단해요! 타요처럼 힘차게!',
-        '티니핑처럼 반짝반짝!',
-        '정말 잘했어요!',
-        '최고예요!',
-        '환상적이에요!',
-        '훌륭해요!'
+        '정답! 멋져요 🚍', '맞았어요! 👑', '대단해요! 타요처럼 힘차게!',
+        '티니핑처럼 반짝반짝!', '정말 잘했어요!', '최고예요!', '환상적이에요!', '훌륭해요!'
       ],
       wrong: [
-        '아쉽지만 다음 문제도 힘내요!',
-        '조금만 더 집중! 💪',
-        '괜찮아요, 포기하지 마요!',
-        '조금만 더 연습하면 금방 맞출 수 있어요!'
+        '아쉽지만 다음 문제도 힘내요!', '조금만 더 집중! 💪', '괜찮아요, 포기하지 마요!', '조금만 더 연습하면 금방 맞출 수 있어요!'
       ]
     };
     function getResultMsg(rate) {
@@ -225,4 +235,141 @@
         let q = '', a = 0;
         if (age <= 6) {
           if (Math.random() < 0.5) { let x=randInt(1,10), y=randInt(1,10); q = `${x} + ${y}`; a = x+y; }
-          else { let x=randInt(1,10), y=randInt(1,10); let max=Math.max(x,y), min=Math.min(x,y); q = `${max} - ${min}`; a = max-min; }\
+          else { let x=randInt(1,10), y=randInt(1,10); let max=Math.max(x,y), min=Math.min(x,y); q = `${max} - ${min}`; a = max-min; }
+        } else if (age<=8) {
+          let t=Math.random();
+          if (t<0.4) { let x=randInt(0,20),y=randInt(0,20-x); q=`${x} + ${y}`; a=x+y; }
+          else if (t<0.8) { let x=randInt(0,20),y=randInt(0,x); q=`${x} - ${y}`; a=x-y; }
+          else { let x=randInt(1,5),y=randInt(1,5); q=`${x} × ${y}`; a=x*y; }
+        } else if (age<=10) {
+          let t=Math.random();
+          if (t<0.25) { let x=randInt(0,10),y=randInt(0,10); q=`${x} + ${y}`; a=x+y; }
+          else if (t<0.5) { let x=randInt(0,10),y=randInt(0,10),mx=Math.max(x,y),mn=Math.min(x,y); q=`${mx} - ${mn}`; a=mx-mn; }
+          else if (t<0.75) { let x=randInt(1,10),y=randInt(1,10); q=`${x} × ${y}`; a=x*y; }
+          else { let x=randInt(1,10),y=randInt(1,10),p=x*y; q=`${p} ÷ ${x}`; a=p/x; }
+        } else {
+          let two=Math.random()<0.3;
+          if (!two) {
+            let t=Math.random();
+            if (t<0.25) { let x=randInt(0,50),y=randInt(0,50); q=`${x} + ${y}`; a=x+y; }
+            else if (t<0.5) { let x=randInt(0,50),y=randInt(0,x); q=`${x} - ${y}`; a=x-y; }
+            else if (t<0.75) { let x=randInt(1,20),y=randInt(1,20); q=`${x} × ${y}`; a=x*y; }
+            else { let x=randInt(1,20),y=randInt(1,20),p=x*y; q=`${p} ÷ ${x}`; a=p/x; }
+          } else {
+            let pat=randInt(1,6); let x,y,z;
+            switch(pat) {
+              case 1: x=randInt(1,20),y=randInt(1,20),z=randInt(1,10); q=`(${x} + ${y}) × ${z}`; a=(x+y)*z; break;
+              case 2: x=randInt(1,10),y=randInt(1,20),z=randInt(1,20); q=`${x} × (${y} + ${z})`; a=x*(y+z); break;
+              case 3: x=randInt(1,50),y=randInt(1,x),z=randInt(1,50); q=`(${x} - ${y}) + ${z}`; a=(x-y)+z; break;
+              case 4: x=randInt(1,50),y=randInt(1,50),z=randInt(1,x+y); q=`(${x} + ${y}) - ${z}`; a=(x+y)-z; break;
+              case 5: x=randInt(1,20),y=randInt(1,10),z=randInt(1,10); q=`${x} + ${y} × ${z}`; a=x+(y*z); break;
+              case 6: x=randInt(1,20),y=randInt(1,10),z=randInt(1,x*y); q=`${x} × ${y} - ${z}`; a=(x*y)-z; break;
+            }
+          }
+        }
+        arr.push({q:q, a:a});
+      }
+      return arr.sort(()=>Math.random()-0.5);
+    }
+
+    // '모험 시작' 버튼
+    document.getElementById('startQuizBtn').onclick = function() {
+      const age = parseInt(document.getElementById('ageSelect').value);
+      if (!age || age<5 || age>13) { alert('5~13세 나이만 선택 가능합니다!'); return; }
+      quiz.age = age;
+      quiz.questions = makeQuestions(age);
+      quiz.current = 0;
+      quiz.correct = 0;
+      document.getElementById('ageSection').style.display='none';
+      document.getElementById('quizSection').style.display='block';
+      document.getElementById('resultSection').style.display='none';
+      showQuestion();
+      // 배경음악 첫 상호작용 시 재생 (모바일 대응)
+      const bgm = document.getElementById('bgMusic');
+      if (bgm.paused) bgm.play();
+    };
+
+    // 문제 보여주기
+    function showQuestion() {
+      let qinfo = quiz.questions[quiz.current];
+      document.getElementById('questionNum').textContent = `문제 ${quiz.current+1} / 20`;
+      document.getElementById('questionText').textContent = qinfo.q+' = ?';
+      document.getElementById('answerInput').value = '';
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('answerInput').focus();
+      document.getElementById('submitAnswerBtn').textContent = '정답 확인';
+      document.getElementById('submitAnswerBtn').disabled = false;
+    }
+    // 정답 확인 버튼
+    document.getElementById('submitAnswerBtn').onclick = function() {
+      let userAns = document.getElementById('answerInput').value.trim();
+      let q = quiz.questions[quiz.current];
+      if(userAns==="") { document.getElementById('feedback').textContent = "답을 입력해 주세요!"; return; }
+      if(Number(userAns) === q.a) {
+        quiz.correct++;
+        document.getElementById('feedback').textContent = feedbacks.correct[randInt(0, feedbacks.correct.length-1)];
+        // 박수 효과음
+        if (!applauseCooldown) {
+          document.getElementById('applauseSound').currentTime = 0;
+          document.getElementById('applauseSound').play();
+          applauseCooldown = true;
+          setTimeout(()=>{ applauseCooldown = false; }, 1500);
+        }
+      } else {
+        document.getElementById('feedback').textContent = `${feedbacks.wrong[randInt(0,feedbacks.wrong.length-1)]} (정답: ${q.a})`;
+      }
+      document.getElementById('submitAnswerBtn').textContent = '다음 문제';
+      document.getElementById('submitAnswerBtn').disabled = true;
+      setTimeout(()=>{
+        quiz.current++;
+        if (quiz.current >= 20) finishQuiz();
+        else {
+          showQuestion();
+          document.getElementById('submitAnswerBtn').disabled = false;
+        }
+      }, 1200);
+    };
+    // 엔터키로 정답 제출
+    document.getElementById('answerInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') document.getElementById('submitAnswerBtn').click();
+    });
+
+    function finishQuiz() {
+      document.getElementById('quizSection').style.display='none';
+      document.getElementById('resultSection').style.display='block';
+      document.getElementById('correctCount').textContent = quiz.correct;
+      document.getElementById('totalCount').textContent = '20';
+      let rate = Math.round(quiz.correct/20*100);
+      document.getElementById('accuracy').textContent = rate;
+      document.getElementById('resultMsg').textContent = getResultMsg(rate);
+      document.getElementById('retryBtn').style.display = (rate<70) ? 'inline-block':'none';
+    }
+    // 재도전
+    document.getElementById('retryBtn').onclick = function() {
+      quiz.current = 0;
+      quiz.correct = 0;
+      quiz.questions = makeQuestions(quiz.age);
+      document.getElementById('ageSection').style.display='none';
+      document.getElementById('quizSection').style.display='block';
+      document.getElementById('resultSection').style.display='none';
+      showQuestion();
+    };
+    // 처음으로
+    document.getElementById('restartBtn').onclick = function() {
+      location.reload();
+    };
+
+    // 배경음악 음소거 버튼
+    document.getElementById('muteBtn').onclick = function() {
+      const bgm = document.getElementById('bgMusic');
+      bgm.muted = !bgm.muted;
+      this.textContent = bgm.muted ? '🔇' : '🔊';
+    };
+
+    // 볼륨 적정값
+    window.onload = function() {
+      document.getElementById('bgMusic').volume = 0.4;
+    };
+  </script>
+</body>
+</html>
