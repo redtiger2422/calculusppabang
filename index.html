@@ -1,228 +1,298 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>타요 & 티니핑 수학 모험</title>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(120deg, #a1e0ff 40%, #f9e0ff 100%);
-      box-sizing: border-box;
-      font-family: 'Spoqa Han Sans Neo', 'Noto Sans KR', Arial, sans-serif;
-    }
-    body {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    #gameBox {
-      background: rgba(255,255,255,0.95);
-      border-radius: 20px;
-      box-shadow: 0 6px 40px rgba(20,60,160,0.17);
-      padding: 32px 24px 20px 24px;
-      max-width: 420px;
-      min-width: 330px;
-      width: 90vw;
-      margin: 0 auto;
-      position: relative;
-      text-align: center;
-    }
-    #logoImages {
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .logo-char {
-      height: 60px;
-      border-radius: 10px;
-      object-fit: contain;
-      box-shadow: 0 3px 15px rgba(30,70,180,0.11);
-      background: #eaf6ff;
-      padding: 3px;
-    }
-    #adventureMsg {
-      margin-bottom: 12px;
-    }
-    #adventureMsg div {
-      color: #3186eb;
-      font-size: 1.32em;
-      font-weight: bold;
-      letter-spacing: 1px;
-      text-shadow: 0 1px 5px #fff6;
-      animation: bounce 2.2s infinite;
-      margin: 4px 0;
-    }
-    @keyframes bounce {
-      0% { transform: translateY(0); }
-      15% { transform: translateY(-6px); }
-      30% { transform: translateY(0); }
-      50% { transform: translateY(-4px); }
-      70% { transform: translateY(0); }
-    }
-    label, select, button, input {
-      font-size: 1.15em;
-    }
-    select, input {
-      padding: 7px 12px;
-      border-radius: 6px;
-      border: 1.2px solid #aad3fd;
-      margin-bottom: 12px;
-      width: 70%;
-      max-width: 200px;
-      background: #f5fbff;
-    }
-    button {
-      margin-top: 5px;
-      background: #66b5f6;
-      color: white;
-      font-weight: bold;
-      padding: 8px 24px;
-      border: none;
-      border-radius: 7px;
-      cursor: pointer;
-      box-shadow: 0 2px 7px #88c6fc55;
-      transition: background 0.2s;
-    }
-    button:hover { background: #3d97e0; }
-    #questionNum {
-      font-size: 1.07em;
-      color: #9791cf;
-      margin-bottom: 5px;
-    }
-    #questionText {
-      font-size: 1.6em;
-      font-weight: bold;
-      color: #3677b6;
-      margin-bottom: 18px;
-      margin-top: 0;
-    }
-    #answerInput {
-      text-align: center;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-    #feedback {
-      min-height: 1.1em;
-      font-size: 1.13em;
-      font-weight: 500;
-      margin: 7px 0 0 0;
-      color: #fa7e2e;
-    }
-    #resultSection {
-      margin: 0 0 10px 0;
-    }
-    #resultSection h2 {
-      color: #3a7fbc;
-      margin-bottom: 5px;
-    }
-    #resultMsg {
-      font-size: 1.14em;
-      margin: 12px 0 8px 0;
-      color: #6864e2;
-    }
-    #madeBy {
-      font-size: 0.99em;
-      color: #aaa;
-      margin-top: 18px;
-      letter-spacing: 1.5px;
-      text-align: center;
-      width: 100%;
-      position: relative;
-    }
-    @media (max-width: 500px) {
-      #gameBox {
-        min-width: unset;
-        padding: 8vw 2vw 5vw 2vw;
-      }
-      .logo-char {
-        height: 44px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>어린이 수학 퀴즈 게임</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e0f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        #startScreen {
+            padding: 20px;
+        }
+        #gameScreen {
+            display: none;
+            padding: 20px;
+        }
+        #hud {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        #questionArea {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #answerButtons button {
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            border: 2px solid #00838f;
+            background-color: #4dd0e1;
+            border-radius: 8px;
+            color: #fff;
+        }
+        #answerButtons button:hover {
+            background-color: #00acc1;
+        }
+        #scoreBoard {
+            float: right;
+        }
+        #questionNumber {
+            float: left;
+        }
+        #muteButton {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            border: none;
+            background: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        /* Clear floats */
+        #hud::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
 </head>
 <body>
-  <div id="gameBox">
-    <div id="logoImages">
-      <img src="티니핑공주.png" alt="티니핑공주" class="logo-char">
-      <img src="타요자동차.png" alt="타요자동차" class="logo-char">
-    </div>
-    <div id="adventureMsg">
-      <div>💡 신나는 타요와 티니핑의 수학 모험!💡</div>
-      <div>🚘 지금 떠나요! 🚘</div>
-    </div>
-
-    <!-- 나이 선택 화면 -->
-    <div id="ageSection">
-      <label for="ageSelect">나이를 선택하세요 (5세~13세):</label><br>
-      <select id="ageSelect">
-        <option value="">-- 나이 선택 --</option>
-        <option value="5">5세</option><option value="6">6세</option><option value="7">7세</option>
-        <option value="8">8세</option><option value="9">9세</option><option value="10">10세</option>
-        <option value="11">11세</option><option value="12">12세</option><option value="13">13세</option>
-      </select>
-      <br><button id="startQuizBtn">모험 시작!</button>
+    <div id="startScreen">
+        <h1>어린이 수학 퀴즈</h1>
+        <p>나이를 선택하고 게임을 시작하세요!</p>
+        <label for="ageSelect">나이 선택: </label>
+        <select id="ageSelect">
+            <option value="">--선택--</option>
+            <option value="5">5세</option>
+            <option value="6">6세</option>
+            <option value="7">7세</option>
+            <option value="8">8세</option>
+            <option value="9">9세</option>
+            <option value="10">10세</option>
+            <option value="11">11세</option>
+            <option value="12">12세</option>
+        </select>
+        <button id="startButton">모험 시작!</button>
     </div>
 
-    <!-- 문제 퀴즈 화면 -->
-    <div id="quizSection" style="display:none;">
-      <div id="questionNum"></div>
-      <div id="questionText"></div>
-      <input id="answerInput" type="text" autocomplete="off" placeholder="정답을 써주세요!">
-      <br><button id="submitAnswerBtn">정답 확인</button>
-      <div id="feedback"></div>
+    <div id="gameScreen">
+        <div id="hud">
+            <span id="questionNumber">문제 0/20</span>
+            <span id="scoreBoard">점수: 0</span>
+        </div>
+        <div id="questionArea">
+            <span id="questionText">문제가 여기에 표시됩니다</span>
+        </div>
+        <div id="answerButtons">
+            <button class="answerBtn">보기1</button>
+            <button class="answerBtn">보기2</button>
+            <button class="answerBtn">보기3</button>
+            <button class="answerBtn">보기4</button>
+        </div>
     </div>
 
-    <!-- 결과 화면 -->
-    <div id="resultSection" style="display:none;">
-      <h2>🎉 모험 완료! 🎉</h2>
-      <div>맞춘 개수: <span id="correctCount"></span> / <span id="totalCount"></span></div>
-      <div>정답률: <span id="accuracy"></span>%</div>
-      <div id="resultMsg"></div>
-      <button id="retryBtn" style="display:none;">재도전하기</button>
-      <button id="restartBtn">처음으로</button>
-    </div>
-    <div id="madeBy">Made by 적호약사</div>
-  </div>
+    <!-- 배경음악과 효과음 -->
+    <audio id="bgMusic" src="tayo1.mp3" autoplay loop></audio>
+    <audio id="effectSound" src="applaus11.mp3"></audio>
+    <button id="muteButton">🔊</button>
 
-  <!-- 박수 효과음 (3초, 페이드인/아웃) -->
-  <audio id="applauseSound" src="박수소리1.mp3" preload="auto"></audio>
+    <script>
+        // DOM 요소 참조
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const startButton = document.getElementById('startButton');
+        const ageSelect = document.getElementById('ageSelect');
+        const questionNumberSpan = document.getElementById('questionNumber');
+        const scoreBoard = document.getElementById('scoreBoard');
+        const questionText = document.getElementById('questionText');
+        const answerButtons = document.querySelectorAll('#answerButtons .answerBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        const effectSound = document.getElementById('effectSound');
+        const muteButton = document.getElementById('muteButton');
 
-  <script>
-    let quiz = { age: null, questions: [], current: 0, correct: 0 };
-    const feedbacks = {
-      correct: [
-        '정답! 멋져요 🚍',
-        '맞았어요! 👑',
-        '대단해요! 타요처럼 힘차게!',
-        '티니핑처럼 반짝반짝!',
-        '정말 잘했어요!',
-        '최고예요!',
-        '환상적이에요!',
-        '훌륭해요!'
-      ],
-      wrong: [
-        '아쉽지만 다음 문제도 힘내요!',
-        '조금만 더 집중! 💪',
-        '괜찮아요, 포기하지 마요!',
-        '조금만 더 연습하면 금방 맞출 수 있어요!'
-      ]
-    };
-    function getResultMsg(rate) {
-      if (rate >= 90) return '우수해요! 수학천재! 👑🦖';
-      if (rate >= 80) return '조금만 더 하면 90%도 가능해요! 화이팅! 🌈';
-      return '70%가 넘을 때까지 조금 더 연습해요! 재도전 Go! 🚍👑';
-    }
-    function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-    function makeQuestions(age) {
-      const arr = [];
-      for (let i = 0; i < 20; i++) {
-        let q = '', a = 0;
-        if (age <= 6) {
-          if (Math.random() < 0.5) { let x=randInt(1,10), y=randInt(1,10); q = `${x} + ${y}`; a = x+y; }
-          else { let x=randInt(1,10), y=randInt(1,10); let max=Math.max(x,y), min=Math.min(x,y); q = `${max} - ${min}`; a = max-min; }\
+        let currentQuestion = 0;
+        let score = 0;
+        let age = 0;
+        let questions = [];
+        let effectCooldown = false;
+
+        // 시작 버튼 클릭 시
+        startButton.addEventListener('click', function() {
+            const selectedAge = ageSelect.value;
+            if (!selectedAge) {
+                alert('나이를 선택해주세요!');
+                return;
+            }
+            age = parseInt(selectedAge);
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            startGame();
+            // Ensure background music plays after user interaction
+            if (bgMusic.paused) {
+                bgMusic.play();
+            }
+        });
+
+        // 음소거 토글 버튼
+        muteButton.addEventListener('click', function() {
+            bgMusic.muted = !bgMusic.muted;
+            if (bgMusic.muted) {
+                muteButton.textContent = '🔇';
+            } else {
+                muteButton.textContent = '🔊';
+            }
+        });
+
+        // 답안 버튼 클릭 이벤트
+        answerButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (!this.disabled) {
+                    checkAnswer(this);
+                }
+            });
+        });
+
+        // 게임 시작: 문제 생성 및 첫 문제 표시
+        function startGame() {
+            currentQuestion = 0;
+            score = 0;
+            scoreBoard.textContent = '점수: ' + score;
+            questions = generateQuestions(20);
+            showNextQuestion();
+        }
+
+        // 문제 목록 생성
+        function generateQuestions(num) {
+            const qs = [];
+            for (let i = 0; i < num; i++) {
+                qs.push(createQuestion());
+            }
+            return qs;
+        }
+
+        // 단일 문제 생성 (나이에 따라 난이도 설정)
+        function createQuestion() {
+            let x, y, op;
+            if (age <= 7) {
+                x = getRandomInt(1, 10);
+                y = getRandomInt(1, 10);
+                op = Math.random() < 0.5 ? '+' : '-';
+                if (op === '-' && x < y) {
+                    [x, y] = [y, x];
+                }
+            } else if (age <= 10) {
+                x = getRandomInt(1, 20);
+                y = getRandomInt(1, 20);
+                op = Math.random() < 0.5 ? '+' : '-';
+                if (op === '-' && x < y) {
+                    [x, y] = [y, x];
+                }
+            } else {
+                x = getRandomInt(1, 12);
+                y = getRandomInt(1, 12);
+                let rand = Math.random();
+                if (rand < 0.4) {
+                    op = '+';
+                } else if (rand < 0.8) {
+                    op = '-';
+                    if (x < y) [x, y] = [y, x];
+                } else {
+                    op = '*';
+                }
+            }
+            const questionText = x + " " + op + " " + y + " = ?";
+            let correctAnswer;
+            switch (op) {
+                case '+': correctAnswer = x + y; break;
+                case '-': correctAnswer = x - y; break;
+                case '*': correctAnswer = x * y; break;
+            }
+            const options = new Set();
+            options.add(correctAnswer);
+            while (options.size < 4) {
+                let wrong;
+                if (op === '*' || op === '+') {
+                    wrong = correctAnswer + getRandomInt(-5, 5);
+                } else {
+                    wrong = correctAnswer + getRandomInt(-3, 3);
+                }
+                if (wrong < 0) continue;
+                options.add(wrong);
+            }
+            const optArray = Array.from(options);
+            for (let i = optArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [optArray[i], optArray[j]] = [optArray[j], optArray[i]];
+            }
+            return { text: questionText, options: optArray, answer: correctAnswer };
+        }
+
+        // 다음 문제 표시 또는 게임 종료
+        function showNextQuestion() {
+            currentQuestion++;
+            if (currentQuestion > questions.length) {
+                questionText.textContent = '게임 종료! 최종 점수: ' + score + '/' + questions.length;
+                answerButtons.forEach(btn => {
+                    btn.style.display = 'none';
+                });
+                return;
+            }
+            questionNumberSpan.textContent = '문제 ' + currentQuestion + '/' + questions.length;
+            scoreBoard.textContent = '점수: ' + score;
+            const q = questions[currentQuestion - 1];
+            questionText.textContent = q.text;
+            answerButtons.forEach((button, index) => {
+                button.textContent = q.options[index];
+                button.disabled = false;
+                button.style.backgroundColor = '#4dd0e1';
+                button.style.display = 'block';
+            });
+        }
+
+        // 정답 확인 및 처리
+        function checkAnswer(button) {
+            const selected = parseInt(button.textContent);
+            const q = questions[currentQuestion - 1];
+            answerButtons.forEach(btn => btn.disabled = true);
+            if (selected === q.answer) {
+                score++;
+                scoreBoard.textContent = '점수: ' + score;
+                button.style.backgroundColor = '#81c784'; // 정답 표시 (초록)
+                if (!effectCooldown) {
+                    effectSound.currentTime = 0;
+                    effectSound.play();
+                    effectCooldown = true;
+                    // 1.5초 후에 쿨타임 해제
+                    setTimeout(() => {
+                        effectCooldown = false;
+                    }, 1500);
+                }
+            } else {
+                button.style.backgroundColor = '#e57373'; // 오답 표시 (빨강)
+                // 정답 버튼을 녹색으로 표시
+                answerButtons.forEach(btn => {
+                    if (parseInt(btn.textContent) === q.answer) {
+                        btn.style.backgroundColor = '#81c784';
+                    }
+                });
+            }
+            // 다음 문제로 이동
+            setTimeout(showNextQuestion, 1000);
+        }
+
+        // 랜덤 정수 생성 유틸
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    </script>
+</body>
+</html>
