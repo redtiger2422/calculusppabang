@@ -190,8 +190,8 @@
     <div id="madeBy">Made by 적호약사</div>
   </div>
 
-  <!-- 박수 효과음 -->
-  <audio id="applauseSound" src="https://actions.google.com/sounds/v1/human_voices/applause_01.ogg" preload="auto"></audio>
+  <!-- 박수 효과음 (3초, 페이드인/아웃) -->
+  <audio id="applauseSound" src="박수소리1.mp3" preload="auto"></audio>
 
   <script>
     let quiz = { age: null, questions: [], current: 0, correct: 0 };
@@ -225,105 +225,4 @@
         let q = '', a = 0;
         if (age <= 6) {
           if (Math.random() < 0.5) { let x=randInt(1,10), y=randInt(1,10); q = `${x} + ${y}`; a = x+y; }
-          else { let x=randInt(1,10), y=randInt(1,10); let max=Math.max(x,y), min=Math.min(x,y); q = `${max} - ${min}`; a = max-min; }
-        } else if (age <= 8) {
-          let t = Math.random();
-          if (t < 0.4) { let x=randInt(0,20), y=randInt(0,20-x); q=`${x} + ${y}`; a = x+y; }
-          else if (t < 0.8) { let x=randInt(0,20), y=randInt(0,x); q=`${x} - ${y}`; a = x-y; }
-          else { let x=randInt(1,5), y=randInt(1,5); q=`${x} × ${y}`; a = x*y; }
-        } else if (age <= 10) {
-          let t = Math.random();
-          if (t < 0.25) { let x=randInt(0,10), y=randInt(0,10); q=`${x} + ${y}`; a = x+y; }
-          else if (t < 0.5) { let x=randInt(0,10), y=randInt(0,10), mx=Math.max(x,y), mn=Math.min(x,y); q=`${mx} - ${mn}`; a = mx-mn; }
-          else if (t < 0.75) { let x=randInt(1,10), y=randInt(1,10); q=`${x} × ${y}`; a = x*y; }
-          else { let x=randInt(1,10), y=randInt(1,10), p=x*y; q=`${p} ÷ ${x}`; a = p/x; }
-        } else {
-          let two=Math.random()<0.3;
-          if (!two) {
-            let t=Math.random();
-            if (t<0.25) { let x=randInt(0,50), y=randInt(0,50); q=`${x} + ${y}`; a = x+y; }
-            else if (t<0.5) { let x=randInt(0,50), y=randInt(0,x); q=`${x} - ${y}`; a = x-y; }
-            else if (t<0.75) { let x=randInt(1,20), y=randInt(1,20); q=`${x} × ${y}`; a = x*y; }
-            else { let x=randInt(1,20), y=randInt(1,20), p=x*y; q=`${p} ÷ ${x}`; a = p/x; }
-          } else {
-            let pat=randInt(1,6), x, y, z;
-            switch(pat) {
-              case 1: x=randInt(1,20); y=randInt(1,20); z=randInt(1,10); q=`(${x} + ${y}) × ${z}`; a=(x+y)*z; break;
-              case 2: x=randInt(1,10); y=randInt(1,20); z=randInt(1,20); q=`${x} × (${y} + ${z})`; a=x*(y+z); break;
-              case 3: x=randInt(1,50); y=randInt(1,x); z=randInt(1,50); q=`(${x} - ${y}) + ${z}`; a=(x-y)+z; break;
-              case 4: x=randInt(1,50); y=randInt(1,50); z=randInt(1,x+y); q=`(${x} + ${y}) - ${z}`; a=(x+y)-z; break;
-              case 5: x=randInt(1,20); y=randInt(1,10); z=randInt(1,10); q=`${x} + ${y} × ${z}`; a= x + (y*z); break;
-              case 6: x=randInt(1,20); y=randInt(1,10); z=randInt(1,x*y); q=`${x} × ${y} - ${z}`; a=(x*y) - z; break;
-            }
-          }
-        }
-        arr.push({ q:q, a:a });
-      }
-      return arr.sort(() => Math.random() - 0.5);
-    }
-    const $ = sel => document.querySelector(sel);
-    $('#startQuizBtn').onclick = function() {
-      const age = parseInt($('#ageSelect').value);
-      if (!age || age < 5 || age > 13) { alert('5~13세 나이만 선택 가능합니다!'); return; }
-      quiz.age = age;
-      quiz.questions = makeQuestions(age);
-      quiz.current = 0;
-      quiz.correct = 0;
-      $('#ageSection').style.display = 'none';
-      $('#quizSection').style.display = 'block';
-      $('#resultSection').style.display = 'none';
-      showQuestion();
-    };
-    function showQuestion() {
-      const qinfo = quiz.questions[quiz.current];
-      $('#questionNum').textContent = `문제 ${quiz.current+1} / ${quiz.questions.length}`;
-      $('#questionText').textContent = qinfo.q + ' = ?';
-      $('#answerInput').value = '';
-      $('#feedback').textContent = '';
-      $('#answerInput').focus();
-      $('#submitAnswerBtn').textContent = '정답 확인';
-      $('#submitAnswerBtn').disabled = false;
-    }
-    $('#submitAnswerBtn').onclick = function() {
-      const userAns = $('#answerInput').value.trim();
-      const q = quiz.questions[quiz.current];
-      if (!userAns) { $('#feedback').textContent = '답을 입력해 주세요!'; return; }
-      if (Number(userAns) === q.a) {
-        quiz.correct++;
-        $('#feedback').textContent = feedbacks.correct[randInt(0, feedbacks.correct.length-1)];
-        document.getElementById('applauseSound').play();
-      } else {
-        $('#feedback').textContent = `${feedbacks.wrong[randInt(0, feedbacks.wrong.length-1)]} (정답: ${q.a})`;
-      }
-      $('#submitAnswerBtn').textContent = '다음 문제';
-      $('#submitAnswerBtn').disabled = true;
-      setTimeout(() => {
-        quiz.current++;
-        if (quiz.current >= quiz.questions.length) finishQuiz();
-        else { showQuestion(); $('#submitAnswerBtn').disabled = false; }
-      }, 1200);
-    };
-    $('#answerInput').addEventListener('keypress', e => { if (e.key === 'Enter') $('#submitAnswerBtn').click(); });
-    function finishQuiz() {
-      $('#quizSection').style.display = 'none';
-      $('#resultSection').style.display = 'block';
-      $('#correctCount').textContent = quiz.correct;
-      $('#totalCount').textContent = quiz.questions.length;
-      const rate = Math.round(quiz.correct / quiz.questions.length * 100);
-      $('#accuracy').textContent = rate;
-      $('#resultMsg').textContent = getResultMsg(rate);
-      $('#retryBtn').style.display = rate < 70 ? 'inline-block' : 'none';
-    }
-    $('#retryBtn').onclick = function() {
-      quiz.current = 0;
-      quiz.correct = 0;
-      quiz.questions = makeQuestions(quiz.age);
-      $('#ageSection').style.display = 'none';
-      $('#quizSection').style.display = 'block';
-      $('#resultSection').style.display = 'none';
-      showQuestion();
-    };
-    $('#restartBtn').onclick = () => location.reload();
-  </script>
-</body>
-</html>
+          else { let x=randInt(1,10), y=randInt(1,10); let max=Math.max(x,y), min=Math.min(x,y); q = `${max} - ${min}`; a = max-min; }\
