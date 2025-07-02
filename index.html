@@ -19,6 +19,55 @@
       justify-content: center;
       align-items: center;
     }
+    
+    /* 오프닝 비디오 스타일 */
+    #openingVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    #openingVideo video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    #skipButton {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      color: #333;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 1001;
+      transition: background 0.3s;
+    }
+    
+    #skipButton:hover {
+      background: rgba(255, 255, 255, 0.95);
+    }
+    
+    #gameContainer {
+      width: 100%;
+      height: 100%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    
     #gameBox {
       background: rgba(255,255,255,0.95);
       border-radius: 20px;
@@ -160,59 +209,115 @@
         right: 10px;
         top: 8px;
       }
+      #skipButton {
+        top: 10px;
+        right: 10px;
+        padding: 8px 16px;
+        font-size: 12px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="gameBox">
-    <button id="muteBtn" title="음소거 전환">🔊</button>
-    <div id="logoImages">
-      <img src="티니핑공주.png" alt="티니핑공주" class="logo-char">
-      <img src="타요자동차.png" alt="타요자동차" class="logo-char">
+  <!-- 오프닝 비디오 섹션 -->
+  <div id="openingVideo">
+    <video id="openingVideoPlayer" autoplay>
+      <source src="openvd.mp4" type="video/mp4">
+      브라우저가 비디오를 지원하지 않습니다.
+    </video>
+    <button id="skipButton">건너뛰기</button>
+  </div>
+
+  <!-- 게임 컨테이너 -->
+  <div id="gameContainer">
+    <div id="gameBox">
+      <button id="muteBtn" title="음소거 전환">🔊</button>
+      <div id="logoImages">
+        <img src="티니핑공주.png" alt="티니핑공주" class="logo-char">
+        <img src="타요자동차.png" alt="타요자동차" class="logo-char">
+      </div>
+      <div id="adventureMsg">
+        <div>💡 신나는 타요와 티니핑의 수학 모험!💡</div>
+        <div>🚘 지금 떠나요! 🚘</div>
+      </div>
+      <!-- 나이 선택 화면 -->
+      <div id="ageSection">
+        <label for="ageSelect">나이를 선택하세요 (5세~13세):</label><br>
+        <select id="ageSelect">
+          <option value="">-- 나이 선택 --</option>
+          <option value="5">5세</option><option value="6">6세</option><option value="7">7세</option>
+          <option value="8">8세</option><option value="9">9세</option><option value="10">10세</option>
+          <option value="11">11세</option><option value="12">12세</option><option value="13">13세</option>
+        </select>
+        <br><button id="startQuizBtn">모험 시작!</button>
+      </div>
+      <!-- 문제 퀴즈 화면 -->
+      <div id="quizSection" style="display:none;">
+        <div id="questionNum"></div>
+        <div id="questionText"></div>
+        <input id="answerInput" type="text" autocomplete="off" placeholder="정답을 써주세요!">
+        <br><button id="submitAnswerBtn">정답 확인</button>
+        <div id="feedback"></div>
+      </div>
+      <!-- 결과 화면 -->
+      <div id="resultSection" style="display:none;">
+        <h2>🎉 모험 완료! 🎉</h2>
+        <div>맞춘 개수: <span id="correctCount"></span> / <span id="totalCount"></span></div>
+        <div>정답률: <span id="accuracy"></span>%</div>
+        <div id="resultMsg"></div>
+        <button id="retryBtn" style="display:none;">재도전하기</button>
+        <button id="restartBtn">처음으로</button>
+      </div>
+      <div id="madeBy">Made by 적호약사</div>
     </div>
-    <div id="adventureMsg">
-      <div>💡 신나는 타요와 티니핑의 수학 모험!💡</div>
-      <div>🚘 지금 떠나요! 🚘</div>
-    </div>
-    <!-- 나이 선택 화면 -->
-    <div id="ageSection">
-      <label for="ageSelect">나이를 선택하세요 (5세~13세):</label><br>
-      <select id="ageSelect">
-        <option value="">-- 나이 선택 --</option>
-        <option value="5">5세</option><option value="6">6세</option><option value="7">7세</option>
-        <option value="8">8세</option><option value="9">9세</option><option value="10">10세</option>
-        <option value="11">11세</option><option value="12">12세</option><option value="13">13세</option>
-      </select>
-      <br><button id="startQuizBtn">모험 시작!</button>
-    </div>
-    <!-- 문제 퀴즈 화면 -->
-    <div id="quizSection" style="display:none;">
-      <div id="questionNum"></div>
-      <div id="questionText"></div>
-      <input id="answerInput" type="text" autocomplete="off" placeholder="정답을 써주세요!">
-      <br><button id="submitAnswerBtn">정답 확인</button>
-      <div id="feedback"></div>
-    </div>
-    <!-- 결과 화면 -->
-    <div id="resultSection" style="display:none;">
-      <h2>🎉 모험 완료! 🎉</h2>
-      <div>맞춘 개수: <span id="correctCount"></span> / <span id="totalCount"></span></div>
-      <div>정답률: <span id="accuracy"></span>%</div>
-      <div id="resultMsg"></div>
-      <button id="retryBtn" style="display:none;">재도전하기</button>
-      <button id="restartBtn">처음으로</button>
-    </div>
-    <div id="madeBy">Made by 적호약사</div>
   </div>
 
   <!-- 배경 음악, 효과음 -->
-  <audio id="bgMusic" src="tayo1.mp3" loop autoplay></audio>
+  <audio id="bgMusic" src="tayo1.mp3" loop></audio>
   <audio id="applauseSound" src="coin.mp3" preload="auto"></audio>
 
   <script>
     let quiz = { age: null, questions: [], current: 0, correct: 0 };
     let applauseCooldown = false;
+    let bgMusicStarted = false;
 
+    // 오프닝 비디오 관련 스크립트
+    const openingVideo = document.getElementById('openingVideoPlayer');
+    const openingContainer = document.getElementById('openingVideo');
+    const gameContainer = document.getElementById('gameContainer');
+    const skipButton = document.getElementById('skipButton');
+    const bgMusic = document.getElementById('bgMusic');
+
+    // 비디오가 끝났을 때 게임으로 전환
+    openingVideo.addEventListener('ended', function() {
+      showGame();
+    });
+
+    // 비디오 에러 시 게임으로 전환
+    openingVideo.addEventListener('error', function() {
+      console.error('비디오를 재생할 수 없습니다.');
+      showGame();
+    });
+
+    // 건너뛰기 버튼 클릭 시
+    skipButton.addEventListener('click', function() {
+      showGame();
+    });
+
+    // 게임 화면 표시 함수
+    function showGame() {
+      openingContainer.style.display = 'none';
+      gameContainer.style.display = 'flex';
+      if (!bgMusicStarted) {
+        bgMusic.volume = 0.4;
+        bgMusic.play().catch(e => {
+          console.log('배경음악 자동재생이 차단되었습니다. 사용자 상호작용 후 재생됩니다.');
+        });
+        bgMusicStarted = true;
+      }
+    }
+
+    // 기존 게임 스크립트
     const feedbacks = {
       correct: [
         '정답! 멋져요 🚍', '맞았어요! 👑', '대단해요! 타요처럼 힘차게!', '혹시...멘사!?' ,
@@ -283,8 +388,7 @@
       document.getElementById('resultSection').style.display='none';
       showQuestion();
       // 배경음악 첫 상호작용 시 재생 (모바일 대응)
-      const bgm = document.getElementById('bgMusic');
-      if (bgm.paused) bgm.play();
+      if (bgMusic.paused) bgMusic.play();
     };
 
     function showQuestion() {
@@ -352,13 +456,8 @@
     };
 
     document.getElementById('muteBtn').onclick = function() {
-      const bgm = document.getElementById('bgMusic');
-      bgm.muted = !bgm.muted;
-      this.textContent = bgm.muted ? '🔇' : '🔊';
-    };
-
-    window.onload = function() {
-      document.getElementById('bgMusic').volume = 0.4;
+      bgMusic.muted = !bgMusic.muted;
+      this.textContent = bgMusic.muted ? '🔇' : '🔊';
     };
   </script>
 </body>
