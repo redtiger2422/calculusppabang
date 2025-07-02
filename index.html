@@ -90,6 +90,66 @@
       transform: translateX(-50%) scale(1.05);
     }
     
+    /* 축하 비디오 스타일 */
+    #celebrationVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    #celebrationPlayer {
+      width: 100%;
+      height: 100%;
+      max-width: 1280px;
+      max-height: 720px;
+    }
+    
+    .celebration-text {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #FFD700;
+      font-size: 28px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      animation: sparkle 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes sparkle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
+    #closeVideoBtn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 100, 100, 0.9);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      z-index: 1001;
+      transition: all 0.3s;
+    }
+    
+    #closeVideoBtn:hover {
+      background: rgba(255, 50, 50, 0.95);
+      transform: translateX(-50%) scale(1.05);
+    }
+    
     #gameContainer {
       width: 100%;
       height: 100%;
@@ -245,10 +305,13 @@
         padding: 8px 16px;
         font-size: 12px;
       }
-      #soundButton {
+      #soundButton, #closeVideoBtn {
         bottom: 10px;
         padding: 10px 20px;
         font-size: 14px;
+      }
+      .celebration-text {
+        font-size: 20px;
       }
     }
   </style>
@@ -257,13 +320,24 @@
   <!-- 오프닝 비디오 섹션 -->
   <div id="openingVideo">
     <iframe id="youtubePlayer" 
-            src="https://www.youtube.com/embed/SkZ8y0geBkU?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&enablejsapi=1" 
+            src="https://www.youtube.com/embed/SkZ8y0geBkU?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&enablejsapi=1" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen>
     </iframe>
     <button id="skipButton">건너뛰기</button>
-    <button id="soundButton">🔊 소리 켜기</button>
+    <button id="soundButton" style="display:none;">🔊 소리 켜기</button>
+  </div>
+
+  <!-- 축하 비디오 섹션 -->
+  <div id="celebrationVideo">
+    <div class="celebration-text">🎉 축하합니다! 90점 이상! 🎉</div>
+    <iframe id="celebrationPlayer" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+    </iframe>
+    <button id="closeVideoBtn">게임으로 돌아가기</button>
   </div>
 
   <!-- 게임 컨테이너 -->
@@ -318,7 +392,16 @@
     let quiz = { age: null, questions: [], current: 0, correct: 0 };
     let applauseCooldown = false;
     let bgMusicStarted = false;
-    let isSoundOn = false;
+    let isSoundOn = true; // 기본적으로 소리 켜짐
+    let celebrationPlayer;
+
+    // 축하 영상 목록
+    const celebrationVideos = [
+      'yg9vV3_rVI0',
+      '5chNiLy9X_A',
+      'vE7tGIxzfwo',
+      'HbBNNzHVLlA'
+    ];
 
     // 오프닝 비디오 관련 스크립트
     const openingContainer = document.getElementById('openingVideo');
@@ -326,6 +409,8 @@
     const skipButton = document.getElementById('skipButton');
     const soundButton = document.getElementById('soundButton');
     const bgMusic = document.getElementById('bgMusic');
+    const celebrationContainer = document.getElementById('celebrationVideo');
+    const closeVideoBtn = document.getElementById('closeVideoBtn');
 
     // YouTube Player API
     let player;
@@ -344,8 +429,13 @@
     }
 
     function onPlayerReady(event) {
-      // 플레이어가 준비되면 초기 볼륨 설정
-      player.setVolume(100);
+      // 자동으로 소리 켜기 시도
+      setTimeout(() => {
+        if (player && player.unMute) {
+          player.unMute();
+          player.setVolume(100);
+        }
+      }, 100);
     }
 
     function onPlayerStateChange(event) {
@@ -355,10 +445,9 @@
       }
     }
 
-    // 소리 켜기/끄기 버튼
+    // 소리 켜기/끄기 버튼 (필요시 사용)
     soundButton.addEventListener('click', function() {
       if (!isSoundOn) {
-        // 소리 켜기
         if (player && player.unMute) {
           player.unMute();
           player.setVolume(100);
@@ -366,7 +455,6 @@
         soundButton.textContent = '🔇 소리 끄기';
         isSoundOn = true;
       } else {
-        // 소리 끄기
         if (player && player.mute) {
           player.mute();
         }
@@ -395,6 +483,33 @@
         bgMusicStarted = true;
       }
     }
+
+    // 축하 영상 재생 함수
+    function playCelebrationVideo() {
+      // 랜덤으로 영상 선택
+      const randomIndex = Math.floor(Math.random() * celebrationVideos.length);
+      const videoId = celebrationVideos[randomIndex];
+      
+      // 배경음악 일시정지
+      bgMusic.pause();
+      
+      // iframe src 설정
+      const celebrationIframe = document.getElementById('celebrationPlayer');
+      celebrationIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&enablejsapi=1`;
+      
+      // 축하 영상 화면 표시
+      celebrationContainer.style.display = 'flex';
+    }
+
+    // 축하 영상 닫기
+    closeVideoBtn.addEventListener('click', function() {
+      const celebrationIframe = document.getElementById('celebrationPlayer');
+      celebrationIframe.src = ''; // 영상 정지
+      celebrationContainer.style.display = 'none';
+      
+      // 배경음악 다시 재생
+      bgMusic.play();
+    });
 
     // 기존 게임 스크립트
     const feedbacks = {
@@ -520,6 +635,13 @@
       document.getElementById('accuracy').textContent = rate;
       document.getElementById('resultMsg').textContent = getResultMsg(rate);
       document.getElementById('retryBtn').style.display = (rate<70) ? 'inline-block':'none';
+      
+      // 90점 이상이면 2초 후 축하 영상 재생
+      if (rate >= 90) {
+        setTimeout(() => {
+          playCelebrationVideo();
+        }, 2000);
+      }
     }
     document.getElementById('retryBtn').onclick = function() {
       quiz.current = 0;
