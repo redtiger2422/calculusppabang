@@ -40,7 +40,7 @@
       object-fit: contain;
     }
     
-    #youtubePlayer {
+    #openingVideoPlayer {
       width: 100%;
       height: 100%;
       max-width: 1280px;
@@ -88,6 +88,84 @@
     #soundButton:hover {
       background: rgba(61, 151, 224, 0.95);
       transform: translateX(-50%) scale(1.05);
+    }
+    
+    /* 축하 메시지 모달 스타일 */
+    #congratsModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    
+    #congratsBox {
+      background: linear-gradient(135deg, #fff 0%, #ffd6f3 100%);
+      border-radius: 25px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+      animation: bounceIn 0.6s ease-out;
+      max-width: 90%;
+      width: 450px;
+    }
+    
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.05); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    #congratsMessage {
+      font-size: 26px;
+      font-weight: bold;
+      color: #ff1493;
+      margin-bottom: 30px;
+      line-height: 1.5;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    #giftButton {
+      background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 15px 40px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    #giftButton:hover {
+      background: linear-gradient(45deg, #ff5252, #ff7043);
+      transform: scale(1.1);
+      box-shadow: 0 8px 30px rgba(255, 107, 107, 0.6);
+    }
+    
+    .gift-emoji {
+      font-size: 50px;
+      margin: 20px 0;
+      animation: rotate 3s linear infinite;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
     
     /* 축하 비디오 스타일 */
@@ -313,20 +391,43 @@
       .celebration-text {
         font-size: 20px;
       }
+      #congratsBox {
+        padding: 30px;
+        width: 90%;
+      }
+      #congratsMessage {
+        font-size: 20px;
+      }
+      #giftButton {
+        font-size: 16px;
+        padding: 12px 30px;
+      }
+      .gift-emoji {
+        font-size: 40px;
+      }
     }
   </style>
 </head>
 <body>
   <!-- 오프닝 비디오 섹션 -->
   <div id="openingVideo">
-    <iframe id="youtubePlayer" 
-            src="https://www.youtube.com/embed/SkZ8y0geBkU?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&enablejsapi=1" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-    </iframe>
+    <video id="openingVideoPlayer" autoplay>
+      <source src="openvd.mp4" type="video/mp4">
+      브라우저가 비디오를 지원하지 않습니다.
+    </video>
     <button id="skipButton">건너뛰기</button>
-    <button id="soundButton" style="display:none;">🔊 소리 켜기</button>
+  </div>
+
+  <!-- 축하 메시지 모달 -->
+  <div id="congratsModal">
+    <div id="congratsBox">
+      <div class="gift-emoji">🎁</div>
+      <div id="congratsMessage">
+        와우! 수학 천재이신가요!?<br>
+        축하 선물을 드리겠습니다~!!
+      </div>
+      <button id="giftButton">선물받기</button>
+    </div>
   </div>
 
   <!-- 축하 비디오 섹션 -->
@@ -387,6 +488,7 @@
   <!-- 배경 음악, 효과음 -->
   <audio id="bgMusic" src="tayo1.mp3" loop></audio>
   <audio id="applauseSound" src="coin.mp3" preload="auto"></audio>
+  <audio id="congratsSound" src="박수소리1.mp3" preload="auto"></audio>
 
   <script>
     let quiz = { age: null, questions: [], current: 0, correct: 0 };
@@ -407,67 +509,56 @@
     const openingContainer = document.getElementById('openingVideo');
     const gameContainer = document.getElementById('gameContainer');
     const skipButton = document.getElementById('skipButton');
-    const soundButton = document.getElementById('soundButton');
+    const openingVideoPlayer = document.getElementById('openingVideoPlayer');
     const bgMusic = document.getElementById('bgMusic');
     const celebrationContainer = document.getElementById('celebrationVideo');
     const closeVideoBtn = document.getElementById('closeVideoBtn');
+    const congratsModal = document.getElementById('congratsModal');
+    const giftButton = document.getElementById('giftButton');
+    const congratsSound = document.getElementById('congratsSound');
 
-    // YouTube Player API
-    let player;
-    let tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    let firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    // 오프닝 비디오 종료 시 자동으로 게임 시작
+    openingVideoPlayer.addEventListener('ended', function() {
+      showGame();
+    });
 
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('youtubePlayer', {
-        events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange
-        }
-      });
-    }
+    // 오프닝 비디오 로드 시 볼륨 설정
+    openingVideoPlayer.addEventListener('loadedmetadata', function() {
+      openingVideoPlayer.volume = 1.0; // 최대 볼륨으로 설정
+      openingVideoPlayer.muted = false; // 음소거 해제
+    });
 
-    function onPlayerReady(event) {
-      // 자동으로 소리 켜기 시도
-      setTimeout(() => {
-        if (player && player.unMute) {
-          player.unMute();
-          player.setVolume(100);
-        }
-      }, 100);
-    }
-
-    function onPlayerStateChange(event) {
-      // 영상이 끝났을 때
-      if (event.data == YT.PlayerState.ENDED) {
-        showGame();
-      }
-    }
-
-    // 소리 켜기/끄기 버튼 (필요시 사용)
-    soundButton.addEventListener('click', function() {
-      if (!isSoundOn) {
-        if (player && player.unMute) {
-          player.unMute();
-          player.setVolume(100);
-        }
-        soundButton.textContent = '🔇 소리 끄기';
-        isSoundOn = true;
-      } else {
-        if (player && player.mute) {
-          player.mute();
-        }
-        soundButton.textContent = '🔊 소리 켜기';
-        isSoundOn = false;
-      }
+    // 오프닝 비디오 재생 시도
+    openingVideoPlayer.play().catch(e => {
+      console.log('자동재생이 차단되었습니다. 사용자 상호작용 필요:', e);
+      // 자동재생이 차단된 경우 클릭하여 재생하도록 안내
+      const playButton = document.createElement('button');
+      playButton.textContent = '▶ 영상 재생하기';
+      playButton.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px 40px;
+        font-size: 20px;
+        background: #66b5f6;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        z-index: 1002;
+      `;
+      playButton.onclick = function() {
+        openingVideoPlayer.play();
+        playButton.remove();
+      };
+      openingContainer.appendChild(playButton);
     });
 
     // 건너뛰기 버튼 클릭 시
     skipButton.addEventListener('click', function() {
-      if (player && player.stopVideo) {
-        player.stopVideo();
-      }
+      openingVideoPlayer.pause();
+      openingVideoPlayer.currentTime = 0;
       showGame();
     });
 
@@ -484,14 +575,34 @@
       }
     }
 
+    // 축하 메시지 표시 함수
+    function showCongratsModal() {
+      // 배경음악 일시정지
+      bgMusic.pause();
+      
+      // 축하 메시지 모달 표시
+      congratsModal.style.display = 'flex';
+      
+      // 박수소리 재생
+      congratsSound.play().catch(e => {
+        console.log('박수소리 재생 실패:', e);
+      });
+    }
+
+    // 선물받기 버튼 클릭 이벤트
+    giftButton.addEventListener('click', function() {
+      // 축하 메시지 모달 숨기기
+      congratsModal.style.display = 'none';
+      
+      // 축하 영상 재생
+      playCelebrationVideo();
+    });
+
     // 축하 영상 재생 함수
     function playCelebrationVideo() {
       // 랜덤으로 영상 선택
       const randomIndex = Math.floor(Math.random() * celebrationVideos.length);
       const videoId = celebrationVideos[randomIndex];
-      
-      // 배경음악 일시정지
-      bgMusic.pause();
       
       // iframe src 설정
       const celebrationIframe = document.getElementById('celebrationPlayer');
@@ -636,10 +747,10 @@
       document.getElementById('resultMsg').textContent = getResultMsg(rate);
       document.getElementById('retryBtn').style.display = (rate<70) ? 'inline-block':'none';
       
-      // 90점 이상이면 2초 후 축하 영상 재생
+      // 90점 이상이면 2초 후 축하 메시지 모달 표시
       if (rate >= 90) {
         setTimeout(() => {
-          playCelebrationVideo();
+          showCongratsModal();
         }, 2000);
       }
     }
