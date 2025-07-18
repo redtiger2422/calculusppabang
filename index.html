@@ -425,8 +425,17 @@
   </style>
 </head>
 <body>
+  <!-- 오프닝 비디오 섹션 -->
+  <div id="openingVideo">
+    <video id="openingVideoPlayer" autoplay>
+      <source src="openvd.mp4" type="video/mp4">
+      브라우저가 비디오를 지원하지 않습니다.
+    </video>
+    <button id="skipButton">건너뛰기</button>
+  </div>
+
   <!-- 게임 컨테이너 -->
-  <div id="gameContainer">
+  <div id="gameContainer" style="display: none;">
     <div id="gameBox">
       <button id="muteBtn" title="음소거 전환">🔊</button>
       <div id="logoImages">
@@ -644,6 +653,78 @@
         "🧩 분배법칙 활용: 괄호 밖의 수를 괄호 안 각각에 곱하거나 나누어요!\n예: 4×(15+8) → 4×15+4×8 → 60+32 = 92\n💡 복잡해 보이는 식도 간단한 계산 여러 개로 바뀌어요!"
       ]
     };
+
+    // 오프닝 비디오 관련 요소들
+    const openingContainer = document.getElementById('openingVideo');
+    const gameContainer = document.getElementById('gameContainer');
+    const skipButton = document.getElementById('skipButton');
+    const openingVideoPlayer = document.getElementById('openingVideoPlayer');
+
+    // 오프닝 비디오 폴백 처리 (3초 후 자동 게임 시작)
+    setTimeout(() => {
+      if (openingContainer.style.display !== 'none') {
+        console.log('비디오 로드 실패 - 3초 후 자동 게임 시작');
+        showGame();
+      }
+    }, 3000);
+
+    // 오프닝 비디오 종료 시 자동으로 게임 시작
+    openingVideoPlayer.addEventListener('ended', function() {
+      showGame();
+    });
+
+    // 오프닝 비디오 로드 시 볼륨 설정
+    openingVideoPlayer.addEventListener('loadedmetadata', function() {
+      openingVideoPlayer.volume = 1.0;
+      openingVideoPlayer.muted = false;
+    });
+
+    // 오프닝 비디오 재생 시도
+    openingVideoPlayer.play().catch(e => {
+      console.log('자동재생이 차단되었습니다. 사용자 상호작용 필요:', e);
+      // 자동재생이 차단된 경우 클릭하여 재생하도록 안내
+      const playButton = document.createElement('button');
+      playButton.textContent = '▶ 영상 재생하기';
+      playButton.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px 40px;
+        font-size: 20px;
+        background: #66b5f6;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        z-index: 1002;
+      `;
+      playButton.onclick = function() {
+        openingVideoPlayer.play();
+        playButton.remove();
+      };
+      openingContainer.appendChild(playButton);
+    });
+
+    // 오프닝 비디오 오류 시 게임 시작
+    openingVideoPlayer.addEventListener('error', function() {
+      console.log('비디오 재생 오류 - 게임 시작');
+      showGame();
+    });
+
+    // 건너뛰기 버튼 클릭 시
+    skipButton.addEventListener('click', function() {
+      openingVideoPlayer.pause();
+      openingVideoPlayer.currentTime = 0;
+      showGame();
+    });
+
+    // 게임 화면 표시 함수
+    function showGame() {
+      openingContainer.style.display = 'none';
+      gameContainer.style.display = 'flex';
+      startBackgroundMusic();
+    }
 
     // 축하 메시지 모달 관련
     const congratsModal = document.getElementById('congratsModal');
@@ -948,6 +1029,20 @@
           setTimeout(() => { applauseCooldown = false; }, 1500);
         }
         
+        // 정답 시 즉시 다음 문제로 (1.2초 후)
+        document.getElementById('submitAnswerBtn').textContent = '다음 문제';
+        document.getElementById('submitAnswerBtn').disabled = true;
+        
+        setTimeout(() => {
+          quiz.current++;
+          if (quiz.current >= 20) {
+            finishQuiz();
+          } else {
+            showQuestion();
+            document.getElementById('submitAnswerBtn').disabled = false;
+          }
+        }, 1200);
+        
       } else {
         // 오답 처리
         quiz.consecutiveCorrect = 0;
@@ -970,20 +1065,20 @@
           document.getElementById('mathTip').innerHTML = randomTip.replace(/\n/g, '<br>');
           document.getElementById('mathTip').style.display = 'block';
         }
+        
+        // 오답 시 수동으로 다음 문제로 넘어가기
+        document.getElementById('submitAnswerBtn').textContent = '다음 문제';
+        document.getElementById('submitAnswerBtn').onclick = function() {
+          quiz.current++;
+          if (quiz.current >= 20) {
+            finishQuiz();
+          } else {
+            showQuestion();
+            // 다시 정답 확인 기능으로 복원
+            document.getElementById('submitAnswerBtn').onclick = arguments.callee.caller;
+          }
+        };
       }
-      
-      document.getElementById('submitAnswerBtn').textContent = '다음 문제';
-      document.getElementById('submitAnswerBtn').disabled = true;
-      
-      setTimeout(() => {
-        quiz.current++;
-        if (quiz.current >= 20) {
-          finishQuiz();
-        } else {
-          showQuestion();
-          document.getElementById('submitAnswerBtn').disabled = false;
-        }
-      }, 2000);
     };
 
     // 엔터키 처리
@@ -1039,9 +1134,11 @@
       this.textContent = isSoundOn ? '🔊' : '🔇';
     };
 
-    // 페이지 로드 시 게임 직접 시작 (오프닝 영상 제거)
+    // 페이지 로드 시 오프닝 비디오부터 시작
     window.addEventListener('load', function() {
-      document.getElementById('gameContainer').style.display = 'flex';
+      // 오프닝 비디오가 먼저 표시됨 (기본 상태)
+      openingContainer.style.display = 'flex';
+      gameContainer.style.display = 'none';
     });
 
   </script>
