@@ -658,12 +658,24 @@
     const gameContainer = document.getElementById('gameContainer');
     const skipButton = document.getElementById('skipButton');
     const openingVideoPlayer = document.getElementById('openingVideoPlayer');
+    let videoTimeoutId = null;
+    let gameStarted = false;
 
     // 게임 화면 표시 함수
     function showGame() {
+      if (gameStarted) return; // 이미 게임이 시작된 경우 중복 실행 방지
+      gameStarted = true;
+      
+      console.log('게임 시작');
       openingContainer.style.display = 'none';
       gameContainer.style.display = 'flex';
       startBackgroundMusic();
+      
+      // 타임아웃 정리
+      if (videoTimeoutId) {
+        clearTimeout(videoTimeoutId);
+        videoTimeoutId = null;
+      }
     }
 
     // 오프닝 비디오 종료 시 자동으로 게임 시작
@@ -672,26 +684,32 @@
       showGame();
     });
 
+    // 건너뛰기 버튼 클릭 시
+    skipButton.addEventListener('click', function() {
+      console.log('건너뛰기 버튼 클릭됨');
+      openingVideoPlayer.pause();
+      openingVideoPlayer.currentTime = 0;
+      showGame();
+    });
+
     // 오프닝 비디오 로드 시 볼륨 설정
     openingVideoPlayer.addEventListener('loadedmetadata', function() {
-      console.log('비디오 메타데이터 로드됨');
+      console.log('비디오 메타데이터 로드됨, 길이:', openingVideoPlayer.duration + '초');
       openingVideoPlayer.volume = 1.0;
       openingVideoPlayer.muted = false;
     });
 
-    // 오프닝 비디오 재생 시도
-    openingVideoPlayer.addEventListener('loadstart', function() {
-      console.log('비디오 로드 시작');
-    });
-
-    openingVideoPlayer.addEventListener('canplay', function() {
-      console.log('비디오 재생 가능');
-    });
-
     // 자동재생 시도
     function tryAutoplay() {
+      if (gameStarted) return;
+      
       openingVideoPlayer.play().then(() => {
         console.log('비디오 자동재생 성공');
+        // 자동재생 성공 시 타임아웃 해제
+        if (videoTimeoutId) {
+          clearTimeout(videoTimeoutId);
+          videoTimeoutId = null;
+        }
       }).catch(e => {
         console.log('자동재생이 차단되었습니다:', e);
         // 자동재생이 차단된 경우 클릭하여 재생하도록 안내
@@ -715,10 +733,15 @@
         playButton.onclick = function() {
           openingVideoPlayer.play().then(() => {
             playButton.remove();
+            // 수동 재생 성공 시 타임아웃 해제
+            if (videoTimeoutId) {
+              clearTimeout(videoTimeoutId);
+              videoTimeoutId = null;
+            }
           }).catch(err => {
             console.log('수동 재생도 실패:', err);
             playButton.remove();
-            showGame(); // 재생 실패 시 게임으로 넘어가기
+            showGame();
           });
         };
         openingContainer.appendChild(playButton);
@@ -733,27 +756,13 @@
       }, 1000);
     });
 
-    // 건너뛰기 버튼 클릭 시
-    skipButton.addEventListener('click', function() {
-      console.log('건너뛰기 버튼 클릭됨');
-      openingVideoPlayer.pause();
-      openingVideoPlayer.currentTime = 0;
-      showGame();
-    });
-
-    // 비디오 파일이 없거나 로드되지 않을 경우 5초 후 게임 시작
-    const videoTimeout = setTimeout(() => {
-      if (openingContainer.style.display !== 'none') {
+    // 비디오 파일이 없거나 로드되지 않을 경우에만 타임아웃
+    videoTimeoutId = setTimeout(() => {
+      if (!gameStarted && openingContainer.style.display !== 'none') {
         console.log('비디오 로드 시간 초과 - 게임 시작');
         showGame();
       }
-    }, 5000);
-
-    // 비디오가 성공적으로 로드되면 타임아웃 취소
-    openingVideoPlayer.addEventListener('loadeddata', function() {
-      console.log('비디오 데이터 로드 완료');
-      clearTimeout(videoTimeout);
-    });
+    }, 10000); // 10초로 증가
 
     // 축하 메시지 모달 관련
     const congratsModal = document.getElementById('congratsModal');
@@ -1017,8 +1026,15 @@
       document.getElementById('answerInput').focus();
       document.getElementById('submitAnswerBtn').textContent = '정답 확인';
       document.getElementById('submitAnswerBtn').disabled = false;
-      // 버튼 기능을 정답 확인으로 복원
-      document.getElementById('submitAnswerBtn').onclick = checkAnswer;
+      
+      // 버튼 이벤트 리스너를 완전히 새로 설정
+      const btn = document.getElementById('submitAnswerBtn');
+      // 기존 이벤트 리스너 모두 제거
+      btn.replaceWith(btn.cloneNode(true));
+      // 새로운 버튼 참조 가져오기
+      const newBtn = document.getElementById('submitAnswerBtn');
+      // 정답 확인 이벤트 추가
+      newBtn.addEventListener('click', checkAnswer);
     }
 
     // 정답 확인 함수
@@ -1094,7 +1110,11 @@
         // 오답 시 수동으로 다음 문제로 (자동 넘어가기 제거)
         document.getElementById('submitAnswerBtn').textContent = '다음 문제';
         document.getElementById('submitAnswerBtn').disabled = false;
-        document.getElementById('submitAnswerBtn').onclick = goToNextQuestion;
+        
+        // 버튼 클릭 이벤트를 다음 문제로 변경
+        const btn = document.getElementById('submitAnswerBtn');
+        btn.removeEventListener('click', checkAnswer);
+        btn.addEventListener('click', goToNextQuestion);
       }
     }
 
@@ -1108,8 +1128,13 @@
       }
     }
 
-    // 정답 확인 버튼 이벤트
-    document.getElementById('submitAnswerBtn').onclick = checkAnswer;
+    // 정답 확인 버튼 초기 이벤트 (게임 시작 시에만)
+    document.addEventListener('DOMContentLoaded', function() {
+      const initialBtn = document.getElementById('submitAnswerBtn');
+      if (initialBtn) {
+        initialBtn.addEventListener('click', checkAnswer);
+      }
+    });
 
     // 엔터키 처리
     document.getElementById('answerInput').addEventListener('keypress', function(e) {
