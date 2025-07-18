@@ -587,71 +587,212 @@
       "힘들어도 포기하지 마세요! 거의 다 왔어요! 🎈"
     ];
 
-    // 수학 팁 시스템 (기획서 반영)
-    const mathTips = {
-      3: [
-        "🧸 손가락 세기: 손가락을 하나씩 펴면서 세어보세요!\n1, 2, 3... 손가락이 바로 계산기예요!\n💡 타요 버스에서 친구들을 세는 것처럼 하나씩 세어보세요!",
-        "🎈 물건으로 더하기: 블록이나 장난감으로 직접 해보세요!\n블록 2개 + 블록 1개 = 블록 3개!\n💡 눈으로 보고 만져보면서 계산하면 쉬워요!",
-        "🍎 빼기는 없애기: 5개 사과에서 2개를 먹으면 몇 개가 남을까요?\n하나씩 없애면서 세어보세요!\n💡 티니핑처럼 마법으로 하나씩 사라지게 해보세요!",
-        "🌟 숫자 친구 만들기: 1은 막대기, 2는 백조, 3은 귀처럼 생겼어요!\n숫자 모양을 기억하면 더 쉬워져요!\n💡 숫자들도 타요와 티니핑처럼 우리 친구예요!"
-      ],
-      4: [
-        "🧸 손가락 세기: 손가락을 하나씩 펴면서 세어보세요!\n1, 2, 3... 손가락이 바로 계산기예요!\n💡 타요 버스에서 친구들을 세는 것처럼 하나씩 세어보세요!",
-        "🎈 물건으로 더하기: 블록이나 장난감으로 직접 해보세요!\n블록 2개 + 블록 1개 = 블록 3개!\n💡 눈으로 보고 만져보면서 계산하면 쉬워요!",
-        "🍎 빼기는 없애기: 5개 사과에서 2개를 먹으면 몇 개가 남을까요?\n하나씩 없애면서 세어보세요!\n💡 티니핑처럼 마법으로 하나씩 사라지게 해보세요!",
-        "🌟 숫자 친구 만들기: 1은 막대기, 2는 백조, 3은 귀처럼 생겼어요!\n숫자 모양을 기억하면 더 쉬워져요!\n💡 숫자들도 타요와 티니핑처럼 우리 친구예요!"
-      ],
-      5: [
-        "🎯 받아올림 마스터법: 일의 자리부터 10을 만들어요!\n예: 9+7 → 9+1+6 → 10+6 = 16\n💡 9에 1을 주고, 7에서 1을 빼면 10+6이 되어요!",
-        "⚡ 10의 보수 활용법: 10을 만드는 짝을 찾아요!\n예: 8+5 → 8+2+3 → 10+3 = 13\n💡 8의 짝 2를 먼저 더하고, 남은 3을 더해요!",
-        "🧠 암산 고수법: 큰 수에 작은 수를 하나씩 더해요!\n예: 46+8 → 46+4+4 → 50+4 = 54\n💡 먼저 50을 만들고 나머지를 더하면 쉬워요!"
-      ],
-      6: [
-        "🎯 받아올림 마스터법: 일의 자리부터 10을 만들어요!\n예: 9+7 → 9+1+6 → 10+6 = 16\n💡 9에 1을 주고, 7에서 1을 빼면 10+6이 되어요!",
-        "⚡ 10의 보수 활용법: 10을 만드는 짝을 찾아요!\n예: 8+5 → 8+2+3 → 10+3 = 13\n💡 8의 짝 2를 먼저 더하고, 남은 3을 더해요!",
-        "🧠 암산 고수법: 큰 수에 작은 수를 하나씩 더해요!\n예: 46+8 → 46+4+4 → 50+4 = 54\n💡 먼저 50을 만들고 나머지를 더하면 쉬워요!"
-      ],
-      7: [
-        "🎯 받아올림 마스터법: 일의 자리부터 10을 만들어요!\n예: 9+7 → 9+1+6 → 10+6 = 16\n💡 9에 1을 주고, 7에서 1을 빼면 10+6이 되어요!",
-        "🎭 받아내림 없애기: 양쪽에서 같은 수를 더하거나 빼요!\n예: 52-35 → (52-2)-(35-2) → 50-33 = 17\n💡 계산하기 쉬운 수로 바꾸는 마법이에요!",
-        "🚀 분해곱셈 마스터: 큰 수를 10+α로 나누어 계산해요!\n예: 7×13 → 7×(10+3) → 7×10+7×3 → 70+21 = 91\n💡 큰 곱셈도 작은 곱셈 여러 개로 바뀌어요!"
-      ],
-      8: [
-        "🎯 받아올림 마스터법: 일의 자리부터 10을 만들어요!\n예: 9+7 → 9+1+6 → 10+6 = 16\n💡 9에 1을 주고, 7에서 1을 빼면 10+6이 되어요!",
-        "🎭 받아내림 없애기: 양쪽에서 같은 수를 더하거나 빼요!\n예: 52-35 → (52-2)-(35-2) → 50-33 = 17\n💡 계산하기 쉬운 수로 바꾸는 마법이에요!",
-        "🚀 분해곱셈 마스터: 큰 수를 10+α로 나누어 계산해요!\n예: 7×13 → 7×(10+3) → 7×10+7×3 → 70+21 = 91\n💡 큰 곱셈도 작은 곱셈 여러 개로 바뀌어요!",
-        "⭐ 9의 비밀: 9를 곱할 때는 10을 곱하고 자기 자신을 빼요!\n예: 8×9 → 8×10-8×1 → 80-8 = 72\n💡 9×표는 이렇게 하면 구구단을 몰라도 계산돼요!"
-      ],
-      9: [
-        "🔄 분해덧셈 비법: 큰 수를 십의 자리와 일의 자리로 나누어요!\n예: 27+35 → (20+30)+(7+5) → 50+12 = 62\n💡 같은 자리끼리 따로 계산하면 실수가 줄어요!",
-        "🔢 2배 활용법: 2배씩 계속 만들어 큰 곱셈을 해결해요!\n예: 6×8 → 6×2=12, 12×2=24, 24×2=48\n💡 2배→4배→8배 순서로 가면 어려운 곱셈도 쉬워요!",
-        "🔄 곱셈표 역산법: 나눗셈은 곱셈의 반대! '몇 곱하기 몇이 이 수?'\n예: 56÷7 → 7×?=56 → 7×8=56 → 답: 8\n💡 구구단을 거꾸로 활용하는 가장 확실한 방법!"
-      ],
-      10: [
-        "🔄 분해덧셈 비법: 큰 수를 십의 자리와 일의 자리로 나누어요!\n예: 27+35 → (20+30)+(7+5) → 50+12 = 62\n💡 같은 자리끼리 따로 계산하면 실수가 줄어요!",
-        "🔢 2배 활용법: 2배씩 계속 만들어 큰 곱셈을 해결해요!\n예: 6×8 → 6×2=12, 12×2=24, 24×2=48\n💡 2배→4배→8배 순서로 가면 어려운 곱셈도 쉬워요!",
-        "🔄 곱셈표 역산법: 나눗셈은 곱셈의 반대! '몇 곱하기 몇이 이 수?'\n예: 56÷7 → 7×?=56 → 7×8=56 → 답: 8\n💡 구구단을 거꾸로 활용하는 가장 확실한 방법!",
-        "📦 분해나눗셈 비법: 나누어지는 수를 쪼개서 각각 나누어요!\n예: 84÷6 → (60+24)÷6 → 60÷6+24÷6 → 10+4 = 14\n💡 큰 수도 작은 단위로 나누면 쉬워져요!"
-      ],
-      11: [
-        "🎯 양수곱셈 비법: 한쪽을 반으로, 다른 쪽을 2배로 만들어요!\n예: 8×15 → 4×30 → 2×60 → 1×120 = 120\n💡 계산하기 쉬운 형태로 바꾸는 고급 기법이에요!",
-        "⚡ 추정나눗셈법: 대략적인 답을 먼저 추정하고 조정해요!\n예: 87÷3 → 90÷3=30이니까 조금 작겠다 → 29×3=87 → 답: 29\n💡 어림셈으로 답의 범위를 좁혀가는 프로 기법!",
-        "🎭 괄호 우선 철칙: 계산 순서는 괄호→곱셈/나눗셈→덧셈/뺄셈!\n예: 3+4×5 → 3+20 = 23 (4×5를 먼저!)\n💡 순서를 지키지 않으면 완전히 다른 답이 나와요!"
-      ],
-      12: [
-        "🎯 양수곱셈 비법: 한쪽을 반으로, 다른 쪽을 2배로 만들어요!\n예: 8×15 → 4×30 → 2×60 → 1×120 = 120\n💡 계산하기 쉬운 형태로 바꾸는 고급 기법이에요!",
-        "⚡ 추정나눗셈법: 대략적인 답을 먼저 추정하고 조정해요!\n예: 87÷3 → 90÷3=30이니까 조금 작겠다 → 29×3=87 → 답: 29\n💡 어림셈으로 답의 범위를 좁혀가는 프로 기법!",
-        "🎭 괄호 우선 철칙: 계산 순서는 괄호→곱셈/나눗셈→덧셈/뺄셈!\n예: 3+4×5 → 3+20 = 23 (4×5를 먼저!)\n💡 순서를 지키지 않으면 완전히 다른 답이 나와요!",
-        "📝 단계별 정리법: 복잡한 식은 한 번에 하나씩만!\n예: (12+8)×(15-7) → 20×8 = 160\n💡 중간 과정을 옆에 적어가며 천천히 계산하세요!"
-      ],
-      13: [
-        "🎯 양수곱셈 비법: 한쪽을 반으로, 다른 쪽을 2배로 만들어요!\n예: 8×15 → 4×30 → 2×60 → 1×120 = 120\n💡 계산하기 쉬운 형태로 바꾸는 고급 기법이에요!",
-        "⚡ 추정나눗셈법: 대략적인 답을 먼저 추정하고 조정해요!\n예: 87÷3 → 90÷3=30이니까 조금 작겠다 → 29×3=87 → 답: 29\n💡 어림셈으로 답의 범위를 좁혀가는 프로 기법!",
-        "🎭 괄호 우선 철칙: 계산 순서는 괄호→곱셈/나눗셈→덧셈/뺄셈!\n예: 3+4×5 → 3+20 = 23 (4×5를 먼저!)\n💡 순서를 지키지 않으면 완전히 다른 답이 나와요!",
-        "🔍 어림셈 검증법: 계산 전에 대략적인 답을 예상해보세요!\n예: 23×19 → 대략 20×20=400 → 실제 답이 437이면 맞을 확률 높음\n💡 말도 안 되는 답이 나오면 계산 실수를 의심해보세요!",
-        "🧩 분배법칙 활용: 괄호 밖의 수를 괄호 안 각각에 곱하거나 나누어요!\n예: 4×(15+8) → 4×15+4×8 → 60+32 = 92\n💡 복잡해 보이는 식도 간단한 계산 여러 개로 바뀌어요!"
-      ]
-    };
+    // 문제 유형별 맞춤 설명 함수
+    function getMathTipForQuestion(question, answer, age) {
+      const q = question.toLowerCase();
+      
+      if (age <= 4) {
+        // 3-4세: 기초 설명
+        if (q.includes('+')) {
+          return `🧸 <strong>더하기 설명:</strong><br>
+          ${question}를 손가락으로 세어보세요!<br>
+          왼손으로 ${q.split('+')[0].trim()}개, 오른손으로 ${q.split('+')[1].split('=')[0].trim()}개를 펴고<br>
+          모두 세어보면 ${answer}개가 나와요!<br>
+          💡 블록이나 장난감으로도 해보세요!`;
+        } else if (q.includes('-')) {
+          return `🍎 <strong>빼기 설명:</strong><br>
+          ${q.split('-')[0].trim()}개에서 ${q.split('-')[1].split('=')[0].trim()}개를 빼는 거예요!<br>
+          ${q.split('-')[0].trim()}개의 사탕이 있는데 ${q.split('-')[1].split('=')[0].trim()}개를 먹으면<br>
+          ${answer}개가 남아요!<br>
+          💡 하나씩 없애면서 세어보세요!`;
+        }
+      } else if (age >= 5 && age <= 6) {
+        // 5-6세: 10 이하 연산
+        if (q.includes('+')) {
+          const nums = q.split('+');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          if (answer === 10) {
+            return `🎯 <strong>10 만들기:</strong><br>
+            ${a} + ${b} = 10<br>
+            10을 만드는 짝꿍 숫자들이에요!<br>
+            ${a}과 ${b}는 10의 좋은 친구들이랍니다.<br>
+            💡 10의 짝꿍들을 외우면 계산이 빨라져요!`;
+          } else {
+            return `⚡ <strong>덧셈 비법:</strong><br>
+            ${a} + ${b} = ${answer}<br>
+            큰 수 ${Math.max(a,b)}부터 세고, 작은 수 ${Math.min(a,b)}만큼 더 세어보세요!<br>
+            ${Math.max(a,b)}... ${Math.max(a,b)+1}, ${Math.max(a,b)+2}... = ${answer}<br>
+            💡 큰 수부터 시작하면 더 쉬워요!`;
+          }
+        } else if (q.includes('-')) {
+          const nums = q.split('-');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `🔄 <strong>뺄셈 비법:</strong><br>
+          ${a} - ${b} = ${answer}<br>
+          ${a}에서 ${b}를 빼는 방법:<br>
+          ${a}부터 거꾸로 세어보세요: ${a}에서 ${b}만큼 뒤로!<br>
+          💡 또는 "${b} + ? = ${a}"로 생각해보세요!`;
+        }
+      } else if (age >= 7 && age <= 8) {
+        // 7-8세: 받아올림/받아내림, 곱셈
+        if (q.includes('+')) {
+          const nums = q.split('+');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          if (answer > 10) {
+            return `🎯 <strong>받아올림 마스터:</strong><br>
+            ${a} + ${b} = ${answer}<br>
+            일의 자리: ${a%10} + ${b%10} = ${(a%10)+(b%10)} → ${((a%10)+(b%10)) >= 10 ? '받아올림 1' : '그대로'}<br>
+            십의 자리: ${Math.floor(a/10)} + ${Math.floor(b/10)} ${((a%10)+(b%10)) >= 10 ? '+ 1' : ''} = ${Math.floor(answer/10)}<br>
+            💡 일의 자리부터 차근차근 계산하세요!`;
+          } else {
+            return `⚡ <strong>한 자리 덧셈:</strong><br>
+            ${a} + ${b} = ${answer}<br>
+            간단한 덧셈이에요!<br>
+            💡 10의 보수를 활용하면 더 빨라져요!`;
+          }
+        } else if (q.includes('-')) {
+          const nums = q.split('-');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          if (a > 10 && b > (a%10)) {
+            return `🎭 <strong>받아내림 비법:</strong><br>
+            ${a} - ${b} = ${answer}<br>
+            일의 자리가 부족해서 십의 자리에서 10을 빌려왔어요!<br>
+            ${a} = ${Math.floor(a/10)-1}${(a%10)+10} 로 바꾸고<br>
+            ${(a%10)+10} - ${b} = ${((a%10)+10)-b}, 십의 자리는 ${Math.floor(a/10)-1}<br>
+            💡 십의 자리에서 1을 빌려서 일의 자리에 10을 더해요!`;
+          } else {
+            return `🔄 <strong>간단한 뺄셈:</strong><br>
+            ${a} - ${b} = ${answer}<br>
+            ${a}에서 ${b}만큼 빼면 ${answer}가 남아요!<br>
+            💡 거꾸로 생각하면 ${answer} + ${b} = ${a}예요!`;
+          }
+        } else if (q.includes('×')) {
+          const nums = q.split('×');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `🚀 <strong>곱셈 설명:</strong><br>
+          ${a} × ${b} = ${answer}<br>
+          ${a}을 ${b}번 더하는 거예요!<br>
+          ${Array.from({length: b}, (_, i) => a).join(' + ')} = ${answer}<br>
+          💡 구구단을 외우면 바로바로 계산할 수 있어요!`;
+        }
+      } else if (age >= 9 && age <= 10) {
+        // 9-10세: 구구단, 두 자리 사칙연산
+        if (q.includes('+')) {
+          const nums = q.split('+');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `🔄 <strong>두 자리 덧셈:</strong><br>
+          ${a} + ${b} = ${answer}<br>
+          십의 자리: ${Math.floor(a/10)} + ${Math.floor(b/10)} = ${Math.floor(a/10) + Math.floor(b/10)}<br>
+          일의 자리: ${a%10} + ${b%10} = ${(a%10) + (b%10)} ${(a%10) + (b%10) >= 10 ? '→ 받아올림!' : ''}<br>
+          💡 자리별로 나누어서 계산하면 쉬워요!`;
+        } else if (q.includes('-')) {
+          const nums = q.split('-');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `🔄 <strong>두 자리 뺄셈:</strong><br>
+          ${a} - ${b} = ${answer}<br>
+          십의 자리: ${Math.floor(a/10)} - ${Math.floor(b/10)} = ${Math.floor(a/10) - Math.floor(b/10)}<br>
+          일의 자리: ${a%10} - ${b%10} = ${(a%10) - (b%10)} ${(a%10) < (b%10) ? '→ 받아내림!' : ''}<br>
+          💡 일의 자리가 부족하면 십의 자리에서 빌려오세요!`;
+        } else if (q.includes('×')) {
+          const nums = q.split('×');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `⭐ <strong>구구단 활용:</strong><br>
+          ${a} × ${b} = ${answer}<br>
+          ${a}단: ${a} × ${b} = ${answer}<br>
+          또는 ${b}단: ${b} × ${a} = ${answer}<br>
+          💡 구구단을 외우면 곱셈이 쉬워져요!`;
+        } else if (q.includes('÷')) {
+          const nums = q.split('÷');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `🔄 <strong>나눗셈 = 거꾸로 곱셈:</strong><br>
+          ${a} ÷ ${b} = ${answer}<br>
+          "${b} × ? = ${a}"를 생각해보세요!<br>
+          ${b} × ${answer} = ${a} ✓<br>
+          💡 나눗셈은 곱셈표를 거꾸로 사용하는 거예요!`;
+        }
+      } else {
+        // 11-13세: 복합 계산, 고급 연산
+        if (q.includes('(') && q.includes(')')) {
+          return `🎭 <strong>복합계산 순서:</strong><br>
+          ${question} = ${answer}<br>
+          1단계: 괄호 안부터 계산하세요!<br>
+          2단계: 곱셈과 나눗셈을 먼저<br>
+          3단계: 덧셈과 뺄셈을 나중에<br>
+          💡 계산 순서: ( ) → × ÷ → + -`;
+        } else if (q.includes('×') && (q.includes('+') || q.includes('-'))) {
+          return `🧩 <strong>사칙혼합연산:</strong><br>
+          ${question} = ${answer}<br>
+          곱셈을 먼저 계산하고, 그 다음에 덧셈/뺄셈!<br>
+          순서를 지키는 것이 중요해요.<br>
+          💡 곱셈×나눗셈이 덧셈+뺄셈보다 우선이에요!`;
+        } else if (q.includes('+')) {
+          const nums = q.split('+');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `🔄 <strong>세 자리 덧셈:</strong><br>
+          ${a} + ${b} = ${answer}<br>
+          백의 자리 + 십의 자리 + 일의 자리로 나누어 계산!<br>
+          각 자리별로 더하고 받아올림을 처리하세요.<br>
+          💡 큰 수도 자리별로 나누면 쉬워져요!`;
+        } else if (q.includes('-')) {
+          const nums = q.split('-');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `🔄 <strong>세 자리 뺄셈:</strong><br>
+          ${a} - ${b} = ${answer}<br>
+          각 자리별로 빼고, 부족하면 윗자리에서 빌려오세요!<br>
+          검산: ${answer} + ${b} = ${a} ✓<br>
+          💡 뺄셈 후에는 덧셈으로 검산해보세요!`;
+        } else if (q.includes('×')) {
+          const nums = q.split('×');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `🎯 <strong>큰 수 곱셈:</strong><br>
+          ${a} × ${b} = ${answer}<br>
+          분해해서 계산하면 쉬워요!<br>
+          예: 23 × 4 = (20 + 3) × 4 = 20×4 + 3×4 = 80 + 12 = 92<br>
+          💡 큰 수를 십의 자리와 일의 자리로 나누어 계산하세요!`;
+        } else if (q.includes('÷')) {
+          const nums = q.split('÷');
+          const a = parseInt(nums[0].trim());
+          const b = parseInt(nums[1].split('=')[0].trim());
+          
+          return `📦 <strong>큰 수 나눗셈:</strong><br>
+          ${a} ÷ ${b} = ${answer}<br>
+          나누어지는 수를 작은 단위로 쪼개서 계산하거나<br>
+          "${b} × ? = ${a}"로 생각해보세요!<br>
+          💡 몫 × 나누는수 + 나머지 = 나누어지는수로 검산하세요!`;
+        }
+      }
+      
+      // 기본 설명 (매칭되지 않는 경우)
+      return `💡 <strong>문제 해설:</strong><br>
+      ${question} = ${answer}<br>
+      이 문제의 정답은 ${answer}입니다.<br>
+      천천히 다시 계산해보세요!<br>
+      💪 틀려도 괜찮아요. 연습하면 늘어나요!`;
+    }
 
     // 오프닝 비디오 관련 요소들
     const openingContainer = document.getElementById('openingVideo');
@@ -991,52 +1132,6 @@
       return '70%가 넘을 때까지 조금 더 연습해요! 재도전 Go! 🚍👑';
     }
 
-    // 게임 시작
-    document.getElementById('startQuizBtn').onclick = function() {
-      const age = parseInt(document.getElementById('ageSelect').value);
-      if (!age || age < 3 || age > 13) { 
-        alert('3~13세 나이만 선택 가능합니다!'); 
-        return; 
-      }
-      
-      quiz.age = age;
-      quiz.questions = makeQuestions(age);
-      quiz.current = 0;
-      quiz.correct = 0;
-      quiz.consecutiveCorrect = 0;
-      quiz.consecutiveWrong = 0;
-      
-      document.getElementById('ageSection').style.display = 'none';
-      document.getElementById('quizSection').style.display = 'block';
-      document.getElementById('resultSection').style.display = 'none';
-      showQuestion();
-      
-      // 배경음악 시작
-      startBackgroundMusic();
-    };
-
-    // 문제 표시
-    function showQuestion() {
-      const qinfo = quiz.questions[quiz.current];
-      document.getElementById('questionNum').textContent = `문제 ${quiz.current + 1} / 20`;
-      document.getElementById('questionText').textContent = qinfo.q + ' = ?';
-      document.getElementById('answerInput').value = '';
-      document.getElementById('feedback').textContent = '';
-      document.getElementById('mathTip').style.display = 'none';
-      document.getElementById('answerInput').focus();
-      document.getElementById('submitAnswerBtn').textContent = '정답 확인';
-      document.getElementById('submitAnswerBtn').disabled = false;
-      
-      // 버튼 이벤트 리스너를 완전히 새로 설정
-      const btn = document.getElementById('submitAnswerBtn');
-      // 기존 이벤트 리스너 모두 제거
-      btn.replaceWith(btn.cloneNode(true));
-      // 새로운 버튼 참조 가져오기
-      const newBtn = document.getElementById('submitAnswerBtn');
-      // 정답 확인 이벤트 추가
-      newBtn.addEventListener('click', checkAnswer);
-    }
-
     // 정답 확인 함수
     function checkAnswer() {
       const userAns = document.getElementById('answerInput').value.trim();
@@ -1099,13 +1194,10 @@
         document.getElementById('feedback').textContent = `${message} (정답: ${q.a})`;
         document.getElementById('feedback').style.color = '#dc3545';
         
-        // 수학 팁 표시
-        const tips = mathTips[quiz.age] || [];
-        if (tips.length > 0) {
-          const randomTip = tips[randInt(0, tips.length - 1)];
-          document.getElementById('mathTip').innerHTML = randomTip.replace(/\n/g, '<br>');
-          document.getElementById('mathTip').style.display = 'block';
-        }
+        // 수학 팁 표시 (문제별 맞춤 설명)
+        const customTip = getMathTipForQuestion(q.q, q.a, quiz.age);
+        document.getElementById('mathTip').innerHTML = customTip;
+        document.getElementById('mathTip').style.display = 'block';
         
         // 오답 시 수동으로 다음 문제로 (자동 넘어가기 제거)
         document.getElementById('submitAnswerBtn').textContent = '다음 문제';
@@ -1128,13 +1220,51 @@
       }
     }
 
-    // 정답 확인 버튼 초기 이벤트 (게임 시작 시에만)
-    document.addEventListener('DOMContentLoaded', function() {
-      const initialBtn = document.getElementById('submitAnswerBtn');
-      if (initialBtn) {
-        initialBtn.addEventListener('click', checkAnswer);
+    // 게임 시작
+    document.getElementById('startQuizBtn').onclick = function() {
+      const age = parseInt(document.getElementById('ageSelect').value);
+      if (!age || age < 3 || age > 13) { 
+        alert('3~13세 나이만 선택 가능합니다!'); 
+        return; 
       }
-    });
+      
+      quiz.age = age;
+      quiz.questions = makeQuestions(age);
+      quiz.current = 0;
+      quiz.correct = 0;
+      quiz.consecutiveCorrect = 0;
+      quiz.consecutiveWrong = 0;
+      
+      document.getElementById('ageSection').style.display = 'none';
+      document.getElementById('quizSection').style.display = 'block';
+      document.getElementById('resultSection').style.display = 'none';
+      showQuestion();
+      
+      // 배경음악 시작
+      startBackgroundMusic();
+    };
+
+    // 문제 표시
+    function showQuestion() {
+      const qinfo = quiz.questions[quiz.current];
+      document.getElementById('questionNum').textContent = `문제 ${quiz.current + 1} / 20`;
+      document.getElementById('questionText').textContent = qinfo.q + ' = ?';
+      document.getElementById('answerInput').value = '';
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('mathTip').style.display = 'none';
+      document.getElementById('answerInput').focus();
+      document.getElementById('submitAnswerBtn').textContent = '정답 확인';
+      document.getElementById('submitAnswerBtn').disabled = false;
+      
+      // 버튼 이벤트 리스너를 완전히 새로 설정
+      const btn = document.getElementById('submitAnswerBtn');
+      // 기존 이벤트 리스너 모두 제거
+      btn.replaceWith(btn.cloneNode(true));
+      // 새로운 버튼 참조 가져오기
+      const newBtn = document.getElementById('submitAnswerBtn');
+      // 정답 확인 이벤트 추가
+      newBtn.addEventListener('click', checkAnswer);
+    }
 
     // 엔터키 처리
     document.getElementById('answerInput').addEventListener('keypress', function(e) {
@@ -1191,6 +1321,14 @@
       bgMusic.muted = !isSoundOn;
       this.textContent = isSoundOn ? '🔊' : '🔇';
     };
+
+    // 정답 확인 버튼 초기 이벤트 (게임 시작 시에만)
+    document.addEventListener('DOMContentLoaded', function() {
+      const initialBtn = document.getElementById('submitAnswerBtn');
+      if (initialBtn) {
+        initialBtn.addEventListener('click', checkAnswer);
+      }
+    });
 
     // 페이지 로드 시 오프닝 비디오부터 시작
     window.addEventListener('load', function() {
