@@ -20,7 +20,6 @@
       align-items: center;
     }
     
-    /* 오프닝 비디오 스타일 */
     #openingVideo {
       position: fixed;
       top: 0;
@@ -988,10 +987,12 @@
       document.getElementById('answerInput').focus();
       document.getElementById('submitAnswerBtn').textContent = '정답 확인';
       document.getElementById('submitAnswerBtn').disabled = false;
+      // 버튼 기능을 정답 확인으로 복원
+      document.getElementById('submitAnswerBtn').onclick = checkAnswer;
     }
 
-    // 정답 확인
-    document.getElementById('submitAnswerBtn').onclick = function() {
+    // 정답 확인 함수
+    function checkAnswer() {
       const userAns = document.getElementById('answerInput').value.trim();
       const q = quiz.questions[quiz.current];
       
@@ -1029,18 +1030,12 @@
           setTimeout(() => { applauseCooldown = false; }, 1500);
         }
         
-        // 정답 시 즉시 다음 문제로 (1.2초 후)
+        // 정답 시 1.2초 후 자동으로 다음 문제
         document.getElementById('submitAnswerBtn').textContent = '다음 문제';
         document.getElementById('submitAnswerBtn').disabled = true;
         
         setTimeout(() => {
-          quiz.current++;
-          if (quiz.current >= 20) {
-            finishQuiz();
-          } else {
-            showQuestion();
-            document.getElementById('submitAnswerBtn').disabled = false;
-          }
+          goToNextQuestion();
         }, 1200);
         
       } else {
@@ -1066,25 +1061,33 @@
           document.getElementById('mathTip').style.display = 'block';
         }
         
-        // 오답 시 수동으로 다음 문제로 넘어가기
+        // 오답 시 수동으로 다음 문제로 (자동 넘어가기 제거)
         document.getElementById('submitAnswerBtn').textContent = '다음 문제';
-        document.getElementById('submitAnswerBtn').onclick = function() {
-          quiz.current++;
-          if (quiz.current >= 20) {
-            finishQuiz();
-          } else {
-            showQuestion();
-            // 다시 정답 확인 기능으로 복원
-            document.getElementById('submitAnswerBtn').onclick = arguments.callee.caller;
-          }
-        };
+        document.getElementById('submitAnswerBtn').disabled = false;
+        document.getElementById('submitAnswerBtn').onclick = goToNextQuestion;
       }
-    };
+    }
+
+    // 다음 문제로 이동하는 함수
+    function goToNextQuestion() {
+      quiz.current++;
+      if (quiz.current >= 20) {
+        finishQuiz();
+      } else {
+        showQuestion();
+      }
+    }
+
+    // 정답 확인 버튼 이벤트
+    document.getElementById('submitAnswerBtn').onclick = checkAnswer;
 
     // 엔터키 처리
     document.getElementById('answerInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
-        document.getElementById('submitAnswerBtn').click();
+        const btn = document.getElementById('submitAnswerBtn');
+        if (!btn.disabled) {
+          btn.click();
+        }
       }
     });
 
