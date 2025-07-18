@@ -822,24 +822,200 @@
       return pool;
     }
 
-    // 나이별 문제 생성 함수 (중복 방지)
+    // 나이별 문제 생성 함수 (완전 중복 방지)
     function makeQuestions(age) {
       const pool = generateQuestionPool(age);
-      const shuffled = shuffleArray(pool);
       
-      // 20개 문제 선택 (중복 없음)
-      const selected = shuffled.slice(0, Math.min(20, shuffled.length));
+      // 중복 제거: 문제 텍스트를 기준으로 중복 제거
+      const uniquePool = [];
+      const seenQuestions = new Set();
       
-      // 만약 풀에서 20개를 못 채우면 나머지는 랜덤으로 다시 생성
-      while (selected.length < 20) {
-        const randomFromPool = pool[Math.floor(Math.random() * pool.length)];
-        // 이미 선택된 문제인지 확인
-        if (!selected.some(q => q.q === randomFromPool.q)) {
-          selected.push(randomFromPool);
+      for (const problem of pool) {
+        if (!seenQuestions.has(problem.q)) {
+          seenQuestions.add(problem.q);
+          uniquePool.push(problem);
         }
       }
       
-      return selected;
+      console.log(`나이 ${age}세: 총 ${uniquePool.length}개의 고유 문제 생성`);
+      
+      // 충분한 문제가 없으면 추가 생성
+      if (uniquePool.length < 20) {
+        console.log(`문제 부족 (${uniquePool.length}개) - 추가 생성 중...`);
+        const additionalProblems = generateAdditionalQuestions(age, 20 - uniquePool.length, seenQuestions);
+        uniquePool.push(...additionalProblems);
+      }
+      
+      // 섞기
+      const shuffled = shuffleArray(uniquePool);
+      
+      // 정확히 20개 선택 (중복 없음 보장)
+      const selected = shuffled.slice(0, 20);
+      
+      // 최종 중복 검사 (안전장치)
+      const finalCheck = new Set();
+      const finalQuestions = [];
+      
+      for (const problem of selected) {
+        if (!finalCheck.has(problem.q)) {
+          finalCheck.add(problem.q);
+          finalQuestions.push(problem);
+        }
+      }
+      
+      console.log(`최종 선택된 문제: ${finalQuestions.length}개 (중복 없음)`);
+      
+      return finalQuestions;
+    }
+
+    // 추가 문제 생성 함수 (부족한 경우)
+    function generateAdditionalQuestions(age, needed, existingQuestions) {
+      const additional = [];
+      let attempts = 0;
+      const maxAttempts = 1000; // 무한루프 방지
+      
+      while (additional.length < needed && attempts < maxAttempts) {
+        attempts++;
+        let q = '', a = 0;
+        
+        // 나이별 추가 문제 생성 로직
+        if (age === 3) {
+          if (Math.random() < 0.5) {
+            const x = randInt(1, 3);
+            const y = randInt(1, 5 - x);
+            q = `${x} + ${y}`;
+            a = x + y;
+          } else {
+            const x = randInt(2, 5);
+            const y = randInt(1, x - 1);
+            q = `${x} - ${y}`;
+            a = x - y;
+          }
+        } else if (age === 4) {
+          if (Math.random() < 0.5) {
+            const x = randInt(1, 4);
+            const y = randInt(1, 5 - x);
+            q = `${x} + ${y}`;
+            a = x + y;
+          } else {
+            const x = randInt(2, 5);
+            const y = randInt(1, x);
+            q = `${x} - ${y}`;
+            a = x - y;
+          }
+        } else if (age >= 5 && age <= 6) {
+          if (Math.random() < 0.5) {
+            const x = randInt(1, 9);
+            const y = randInt(1, 10 - x);
+            q = `${x} + ${y}`;
+            a = x + y;
+          } else {
+            const x = randInt(2, 10);
+            const y = randInt(1, x);
+            q = `${x} - ${y}`;
+            a = x - y;
+          }
+        } else if (age >= 7 && age <= 8) {
+          const t = Math.random();
+          if (t < 0.4) {
+            // 받아올림 덧셈
+            const x = randInt(6, 9);
+            const y = randInt(10 - x + 1, 9);
+            q = `${x} + ${y}`;
+            a = x + y;
+          } else if (t < 0.7) {
+            // 받아내림 뺄셈
+            const x = randInt(11, 18);
+            const y = randInt(Math.max(2, x - 10), Math.min(9, x - 1));
+            q = `${x} - ${y}`;
+            a = x - y;
+          } else {
+            // 곱셈
+            const x = randInt(2, 9);
+            const y = randInt(2, 9);
+            q = `${x} × ${y}`;
+            a = x * y;
+          }
+        } else if (age >= 9 && age <= 10) {
+          const t = Math.random();
+          if (t < 0.25) {
+            // 두 자리 덧셈
+            const x = randInt(12, 89);
+            const y = randInt(12, 89);
+            q = `${x} + ${y}`;
+            a = x + y;
+          } else if (t < 0.5) {
+            // 두 자리 뺄셈
+            const x = randInt(25, 99);
+            const y = randInt(12, x - 1);
+            q = `${x} - ${y}`;
+            a = x - y;
+          } else if (t < 0.75) {
+            // 구구단
+            const x = randInt(2, 9);
+            const y = randInt(2, 9);
+            q = `${x} × ${y}`;
+            a = x * y;
+          } else {
+            // 나눗셈
+            const y = randInt(2, 9);
+            const result = randInt(2, 12);
+            const x = y * result;
+            q = `${x} ÷ ${y}`;
+            a = result;
+          }
+        } else {
+          // 11-13세
+          const t = Math.random();
+          if (t < 0.2) {
+            // 세 자리 덧셈
+            const x = randInt(100, 899);
+            const y = randInt(100, 899);
+            q = `${x} + ${y}`;
+            a = x + y;
+          } else if (t < 0.4) {
+            // 세 자리 뺄셈
+            const x = randInt(200, 999);
+            const y = randInt(100, x - 1);
+            q = `${x} - ${y}`;
+            a = x - y;
+          } else if (t < 0.6) {
+            // 두 자리×한 자리
+            const x = randInt(12, 99);
+            const y = randInt(2, 9);
+            q = `${x} × ${y}`;
+            a = x * y;
+          } else if (t < 0.8) {
+            // 두 자리÷한 자리
+            const y = randInt(2, 9);
+            const result = randInt(5, 15);
+            const x = y * result;
+            q = `${x} ÷ ${y}`;
+            a = result;
+          } else {
+            // 간단한 복합계산
+            const x = randInt(5, 25);
+            const y = randInt(5, 25);
+            const z = randInt(2, 5);
+            if (Math.random() < 0.5) {
+              q = `${x} + ${y} × ${z}`;
+              a = x + (y * z);
+            } else {
+              q = `${x} × ${z} + ${y}`;
+              a = (x * z) + y;
+            }
+          }
+        }
+        
+        // 중복 검사
+        if (!existingQuestions.has(q)) {
+          existingQuestions.add(q);
+          additional.push({q: q, a: a});
+        }
+      }
+      
+      console.log(`추가 생성된 문제: ${additional.length}개`);
+      return additional;
     }
 
     // 문제 유형별 맞춤 설명 함수
