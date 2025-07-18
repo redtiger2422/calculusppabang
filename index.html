@@ -587,6 +587,261 @@
       "힘들어도 포기하지 마세요! 거의 다 왔어요! 🎈"
     ];
 
+    // 랜덤 함수
+    function randInt(min, max) { 
+      return Math.floor(Math.random() * (max - min + 1)) + min; 
+    }
+
+    // 배열 셔플 함수
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    // 나이별 문제 풀 생성 함수 (중복 방지)
+    function generateQuestionPool(age) {
+      const pool = [];
+      
+      if (age === 3) {
+        // 3세: 1~5 이하 숫자만 - 정확한 문제들
+        const addProblems = [
+          [1,1], [1,2], [2,1], [2,2], [1,3], [3,1], [2,3], [3,2], [1,4], [4,1]
+        ];
+        const subProblems = [
+          [2,1], [3,1], [3,2], [4,1], [4,2], [4,3], [5,1], [5,2], [5,3], [5,4]
+        ];
+        
+        addProblems.forEach(([a, b]) => {
+          pool.push({q: `${a} + ${b}`, a: a + b});
+        });
+        
+        subProblems.forEach(([a, b]) => {
+          pool.push({q: `${a} - ${b}`, a: a - b});
+        });
+        
+      } else if (age === 4) {
+        // 4세: 1~5, 답이 5 이하 양수
+        const addProblems = [
+          [1,1], [1,2], [1,3], [1,4], [2,1], [2,2], [2,3], [3,1], [3,2], [4,1], [2,4], [4,2], [3,3]
+        ];
+        const subProblems = [
+          [2,1], [3,1], [3,2], [4,1], [4,2], [4,3], [5,1], [5,2], [5,3], [5,4], [5,5]
+        ];
+        
+        addProblems.forEach(([a, b]) => {
+          if (a + b <= 5) {
+            pool.push({q: `${a} + ${b}`, a: a + b});
+          }
+        });
+        
+        subProblems.forEach(([a, b]) => {
+          pool.push({q: `${a} - ${b}`, a: a - b});
+        });
+        
+      } else if (age >= 5 && age <= 6) {
+        // 5-6세: 10 이하 한 자리 수
+        for (let x = 1; x <= 9; x++) {
+          for (let y = 1; y <= 10 - x; y++) {
+            pool.push({q: `${x} + ${y}`, a: x + y});
+          }
+        }
+        
+        for (let x = 1; x <= 10; x++) {
+          for (let y = 1; y <= x; y++) {
+            pool.push({q: `${x} - ${y}`, a: x - y});
+          }
+        }
+        
+      } else if (age >= 7 && age <= 8) {
+        // 7-8세: 받아올림/받아내림, 한 자리 곱셈
+        
+        // 받아올림 덧셈
+        const carryAddPairs = [
+          [9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8],[9,9],
+          [8,3],[8,4],[8,5],[8,6],[8,7],[8,8],[8,9],
+          [7,4],[7,5],[7,6],[7,7],[7,8],[7,9],
+          [6,5],[6,6],[6,7],[6,8],[6,9],
+          [5,6],[5,7],[5,8],[5,9],
+          [4,7],[4,8],[4,9],
+          [3,8],[3,9],
+          [2,9]
+        ];
+        
+        carryAddPairs.forEach(([a, b]) => {
+          pool.push({q: `${a} + ${b}`, a: a + b});
+        });
+        
+        // 받아내림 뺄셈
+        const borrowSubPairs = [
+          [12,3],[12,4],[12,5],[12,6],[12,7],[12,8],[12,9],
+          [13,4],[13,5],[13,6],[13,7],[13,8],[13,9],
+          [14,5],[14,6],[14,7],[14,8],[14,9],
+          [15,6],[15,7],[15,8],[15,9],
+          [16,7],[16,8],[16,9],
+          [17,8],[17,9],
+          [18,9]
+        ];
+        
+        borrowSubPairs.forEach(([a, b]) => {
+          pool.push({q: `${a} - ${b}`, a: a - b});
+        });
+        
+        // 한 자리 곱셈
+        const multiplyPairs = [
+          [2,2],[2,3],[2,4],[2,5],[2,6],[2,7],[2,8],[2,9],
+          [3,3],[3,4],[3,5],[3,6],[3,7],[3,8],[3,9],
+          [4,4],[4,5],[4,6],[4,7],[4,8],[4,9],
+          [5,5],[5,6],[5,7],[5,8],[5,9],
+          [6,6],[6,7],[6,8],[6,9],
+          [7,7],[7,8],[7,9],
+          [8,8],[8,9],
+          [9,9]
+        ];
+        
+        multiplyPairs.forEach(([a, b]) => {
+          pool.push({q: `${a} × ${b}`, a: a * b});
+        });
+        
+      } else if (age >= 9 && age <= 10) {
+        // 9-10세: 두 자리 사칙연산, 구구단
+        
+        // 두 자리 덧셈
+        const twoDigitAdd = [
+          [25,17],[34,28],[46,35],[57,24],[38,46],[29,33],[47,25],[56,38],
+          [23,19],[35,27],[48,36],[59,25],[37,44],[28,35],[49,26],[58,37],
+          [26,18],[33,29],[45,37],[54,28],[39,43],[27,34],[44,29],[55,36]
+        ];
+        
+        twoDigitAdd.forEach(([a, b]) => {
+          pool.push({q: `${a} + ${b}`, a: a + b});
+        });
+        
+        // 두 자리 뺄셈
+        const twoDigitSub = [
+          [52,25],[63,37],[74,48],[85,59],[61,34],[72,45],[83,56],[94,67],
+          [53,26],[64,38],[75,49],[86,58],[62,35],[73,46],[84,57],[95,68],
+          [54,27],[65,39],[76,47],[87,56],[63,36],[74,47],[85,58],[96,69]
+        ];
+        
+        twoDigitSub.forEach(([a, b]) => {
+          pool.push({q: `${a} - ${b}`, a: a - b});
+        });
+        
+        // 구구단
+        const multiplication = [
+          [6,7],[7,8],[8,9],[6,8],[7,9],[6,9],[7,7],[8,8],[9,9],
+          [4,6],[4,7],[4,8],[4,9],[5,6],[5,7],[5,8],[5,9],
+          [3,6],[3,7],[3,8],[3,9],[2,6],[2,7],[2,8],[2,9]
+        ];
+        
+        multiplication.forEach(([a, b]) => {
+          pool.push({q: `${a} × ${b}`, a: a * b});
+        });
+        
+        // 기본 나눗셈
+        const division = [
+          [24,3],[24,4],[24,6],[24,8],[28,4],[28,7],[32,4],[32,8],
+          [35,5],[35,7],[42,6],[42,7],[45,5],[45,9],[48,6],[48,8],
+          [36,6],[36,9],[40,5],[40,8],[54,6],[54,9],[56,7],[56,8]
+        ];
+        
+        division.forEach(([a, b]) => {
+          pool.push({q: `${a} ÷ ${b}`, a: a / b});
+        });
+        
+      } else {
+        // 11-13세: 세 자리 수, 복합 계산
+        
+        // 세 자리 덧셈
+        const threeDigitAdd = [
+          [156,278],[249,167],[378,245],[467,356],[189,234],[295,378],[346,289],[457,168],
+          [234,189],[345,267],[456,378],[567,234],[178,345],[289,456],[356,234],[467,178]
+        ];
+        
+        threeDigitAdd.forEach(([a, b]) => {
+          pool.push({q: `${a} + ${b}`, a: a + b});
+        });
+        
+        // 세 자리 뺄셈
+        const threeDigitSub = [
+          [456,189],[523,267],[634,278],[745,389],[512,145],[623,256],[734,367],[845,478],
+          [567,234],[678,345],[789,456],[654,287],[765,398],[876,234],[543,176],[632,245]
+        ];
+        
+        threeDigitSub.forEach(([a, b]) => {
+          pool.push({q: `${a} - ${b}`, a: a - b});
+        });
+        
+        // 두 자리×한 자리
+        const twoByOne = [
+          [23,4],[34,5],[45,6],[56,7],[67,8],[78,9],[12,8],[13,9],
+          [24,5],[35,6],[46,7],[57,8],[68,9],[79,4],[21,7],[32,8]
+        ];
+        
+        twoByOne.forEach(([a, b]) => {
+          pool.push({q: `${a} × ${b}`, a: a * b});
+        });
+        
+        // 두 자리÷한 자리
+        const twoByOneDiv = [
+          [84,6],[96,8],[75,5],[91,7],[88,4],[92,4],[87,3],[95,5],
+          [72,6],[81,9],[64,8],[56,7],[48,6],[63,9],[54,6],[42,7]
+        ];
+        
+        twoByOneDiv.forEach(([a, b]) => {
+          if (a % b === 0) {
+            pool.push({q: `${a} ÷ ${b}`, a: a / b});
+          }
+        });
+        
+        // 복합계산
+        const complexProblems = [
+          {q: '(12 + 25) × 3', a: (12 + 25) * 3},
+          {q: '4 × (18 + 7)', a: 4 * (18 + 7)},
+          {q: '(145 - 67) + 35', a: (145 - 67) + 35},
+          {q: '28 + 4 × 6', a: 28 + 4 * 6},
+          {q: '5 × 16 - 23', a: 5 * 16 - 23},
+          {q: '72 ÷ 6 + 19', a: 72 / 6 + 19},
+          {q: '(23 + 17) × 2', a: (23 + 17) * 2},
+          {q: '6 × (15 + 9)', a: 6 * (15 + 9)},
+          {q: '(234 - 89) + 56', a: (234 - 89) + 56},
+          {q: '36 + 7 × 8', a: 36 + 7 * 8},
+          {q: '9 × 12 - 34', a: 9 * 12 - 34},
+          {q: '84 ÷ 7 + 25', a: 84 / 7 + 25}
+        ];
+        
+        complexProblems.forEach(problem => {
+          pool.push(problem);
+        });
+      }
+      
+      return pool;
+    }
+
+    // 나이별 문제 생성 함수 (중복 방지)
+    function makeQuestions(age) {
+      const pool = generateQuestionPool(age);
+      const shuffled = shuffleArray(pool);
+      
+      // 20개 문제 선택 (중복 없음)
+      const selected = shuffled.slice(0, Math.min(20, shuffled.length));
+      
+      // 만약 풀에서 20개를 못 채우면 나머지는 랜덤으로 다시 생성
+      while (selected.length < 20) {
+        const randomFromPool = pool[Math.floor(Math.random() * pool.length)];
+        // 이미 선택된 문제인지 확인
+        if (!selected.some(q => q.q === randomFromPool.q)) {
+          selected.push(randomFromPool);
+        }
+      }
+      
+      return selected;
+    }
+
     // 문제 유형별 맞춤 설명 함수
     function getMathTipForQuestion(question, answer, age) {
       const q = question.toLowerCase();
@@ -594,24 +849,30 @@
       if (age <= 4) {
         // 3-4세: 기초 설명
         if (q.includes('+')) {
+          const parts = q.split('+');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           return `🧸 <strong>더하기 설명:</strong><br>
           ${question}를 손가락으로 세어보세요!<br>
-          왼손으로 ${q.split('+')[0].trim()}개, 오른손으로 ${q.split('+')[1].split('=')[0].trim()}개를 펴고<br>
+          왼손으로 ${a}개, 오른손으로 ${b}개를 펴고<br>
           모두 세어보면 ${answer}개가 나와요!<br>
           💡 블록이나 장난감으로도 해보세요!`;
         } else if (q.includes('-')) {
+          const parts = q.split('-');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           return `🍎 <strong>빼기 설명:</strong><br>
-          ${q.split('-')[0].trim()}개에서 ${q.split('-')[1].split('=')[0].trim()}개를 빼는 거예요!<br>
-          ${q.split('-')[0].trim()}개의 사탕이 있는데 ${q.split('-')[1].split('=')[0].trim()}개를 먹으면<br>
+          ${a}개에서 ${b}개를 빼는 거예요!<br>
+          ${a}개의 사탕이 있는데 ${b}개를 먹으면<br>
           ${answer}개가 남아요!<br>
           💡 하나씩 없애면서 세어보세요!`;
         }
       } else if (age >= 5 && age <= 6) {
         // 5-6세: 10 이하 연산
         if (q.includes('+')) {
-          const nums = q.split('+');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('+');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           if (answer === 10) {
             return `🎯 <strong>10 만들기:</strong><br>
@@ -627,9 +888,9 @@
             💡 큰 수부터 시작하면 더 쉬워요!`;
           }
         } else if (q.includes('-')) {
-          const nums = q.split('-');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('-');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `🔄 <strong>뺄셈 비법:</strong><br>
           ${a} - ${b} = ${answer}<br>
@@ -640,9 +901,9 @@
       } else if (age >= 7 && age <= 8) {
         // 7-8세: 받아올림/받아내림, 곱셈
         if (q.includes('+')) {
-          const nums = q.split('+');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('+');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           if (answer > 10) {
             return `🎯 <strong>받아올림 마스터:</strong><br>
@@ -657,9 +918,9 @@
             💡 10의 보수를 활용하면 더 빨라져요!`;
           }
         } else if (q.includes('-')) {
-          const nums = q.split('-');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('-');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           if (a > 10 && b > (a%10)) {
             return `🎭 <strong>받아내림 비법:</strong><br>
@@ -675,9 +936,9 @@
             💡 거꾸로 생각하면 ${answer} + ${b} = ${a}예요!`;
           }
         } else if (q.includes('×')) {
-          const nums = q.split('×');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('×');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `🚀 <strong>곱셈 설명:</strong><br>
           ${a} × ${b} = ${answer}<br>
@@ -688,9 +949,9 @@
       } else if (age >= 9 && age <= 10) {
         // 9-10세: 구구단, 두 자리 사칙연산
         if (q.includes('+')) {
-          const nums = q.split('+');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('+');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `🔄 <strong>두 자리 덧셈:</strong><br>
           ${a} + ${b} = ${answer}<br>
@@ -698,9 +959,9 @@
           일의 자리: ${a%10} + ${b%10} = ${(a%10) + (b%10)} ${(a%10) + (b%10) >= 10 ? '→ 받아올림!' : ''}<br>
           💡 자리별로 나누어서 계산하면 쉬워요!`;
         } else if (q.includes('-')) {
-          const nums = q.split('-');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('-');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `🔄 <strong>두 자리 뺄셈:</strong><br>
           ${a} - ${b} = ${answer}<br>
@@ -708,9 +969,9 @@
           일의 자리: ${a%10} - ${b%10} = ${(a%10) - (b%10)} ${(a%10) < (b%10) ? '→ 받아내림!' : ''}<br>
           💡 일의 자리가 부족하면 십의 자리에서 빌려오세요!`;
         } else if (q.includes('×')) {
-          const nums = q.split('×');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('×');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `⭐ <strong>구구단 활용:</strong><br>
           ${a} × ${b} = ${answer}<br>
@@ -718,9 +979,9 @@
           또는 ${b}단: ${b} × ${a} = ${answer}<br>
           💡 구구단을 외우면 곱셈이 쉬워져요!`;
         } else if (q.includes('÷')) {
-          const nums = q.split('÷');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('÷');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `🔄 <strong>나눗셈 = 거꾸로 곱셈:</strong><br>
           ${a} ÷ ${b} = ${answer}<br>
@@ -744,9 +1005,9 @@
           순서를 지키는 것이 중요해요.<br>
           💡 곱셈×나눗셈이 덧셈+뺄셈보다 우선이에요!`;
         } else if (q.includes('+')) {
-          const nums = q.split('+');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('+');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `🔄 <strong>세 자리 덧셈:</strong><br>
           ${a} + ${b} = ${answer}<br>
@@ -754,9 +1015,9 @@
           각 자리별로 더하고 받아올림을 처리하세요.<br>
           💡 큰 수도 자리별로 나누면 쉬워져요!`;
         } else if (q.includes('-')) {
-          const nums = q.split('-');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('-');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `🔄 <strong>세 자리 뺄셈:</strong><br>
           ${a} - ${b} = ${answer}<br>
@@ -764,9 +1025,9 @@
           검산: ${answer} + ${b} = ${a} ✓<br>
           💡 뺄셈 후에는 덧셈으로 검산해보세요!`;
         } else if (q.includes('×')) {
-          const nums = q.split('×');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('×');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `🎯 <strong>큰 수 곱셈:</strong><br>
           ${a} × ${b} = ${answer}<br>
@@ -774,9 +1035,9 @@
           예: 23 × 4 = (20 + 3) × 4 = 20×4 + 3×4 = 80 + 12 = 92<br>
           💡 큰 수를 십의 자리와 일의 자리로 나누어 계산하세요!`;
         } else if (q.includes('÷')) {
-          const nums = q.split('÷');
-          const a = parseInt(nums[0].trim());
-          const b = parseInt(nums[1].split('=')[0].trim());
+          const parts = q.split('÷');
+          const a = parseInt(parts[0].trim());
+          const b = parseInt(parts[1].split('=')[0].trim());
           
           return `📦 <strong>큰 수 나눗셈:</strong><br>
           ${a} ÷ ${b} = ${answer}<br>
@@ -958,172 +1219,6 @@
       celebrationContainer.style.display = 'none';
       bgMusic.play();
     });
-
-    // 랜덤 함수
-    function randInt(min, max) { 
-      return Math.floor(Math.random() * (max - min + 1)) + min; 
-    }
-
-    // 나이별 문제 생성 함수 (기획서의 상세 커리큘럼 반영)
-    function makeQuestions(age) {
-      const arr = [];
-      
-      for (let i = 0; i < 20; i++) {
-        let q = '', a = 0;
-        
-        if (age === 3) {
-          // 3세: 1~5 이하 숫자만 (기획서 정확한 문제들)
-          if (Math.random() < 0.5) {
-            const problems = [
-              [1,1,2], [1,2,3], [2,1,3], [2,2,4], [1,3,4], [3,1,4], [2,3,5], [3,2,5]
-            ];
-            const prob = problems[randInt(0, problems.length-1)];
-            q = `${prob[0]} + ${prob[1]}`;
-            a = prob[2];
-          } else {
-            const problems = [
-              [2,1,1], [3,1,2], [3,2,1], [4,1,3], [4,2,2], [4,3,1], [5,1,4], [5,2,3], [5,3,2]
-            ];
-            const prob = problems[randInt(0, problems.length-1)];
-            q = `${prob[0]} - ${prob[1]}`;
-            a = prob[2];
-          }
-        } else if (age === 4) {
-          // 4세: 1~5, 답이 5 이하 양수 (기획서 정확한 문제들)
-          if (Math.random() < 0.5) {
-            const problems = [
-              [1,1], [1,2], [1,3], [1,4], [2,1], [2,2], [2,3], [3,1], [3,2], [4,1]
-            ];
-            const prob = problems[randInt(0, problems.length-1)];
-            q = `${prob[0]} + ${prob[1]}`;
-            a = prob[0] + prob[1];
-          } else {
-            const problems = [
-              [2,1], [3,1], [3,2], [4,1], [4,2], [4,3], [5,1], [5,2], [5,3], [5,4]
-            ];
-            const prob = problems[randInt(0, problems.length-1)];
-            q = `${prob[0]} - ${prob[1]}`;
-            a = prob[0] - prob[1];
-          }
-        } else if (age >= 5 && age <= 6) {
-          // 5-6세: 10 이하 한 자리 수
-          if (Math.random() < 0.5) {
-            const x = randInt(1, 9);
-            const y = randInt(1, 10 - x);
-            q = `${x} + ${y}`;
-            a = x + y;
-          } else {
-            const x = randInt(1, 10);
-            const y = randInt(1, x);
-            q = `${x} - ${y}`;
-            a = x - y;
-          }
-        } else if (age >= 7 && age <= 8) {
-          // 7-8세: 받아올림/받아내림, 한 자리 곱셈
-          const t = Math.random();
-          if (t < 0.4) {
-            // 받아올림 덧셈
-            const pairs = [[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[9,8],[9,9],[8,3],[8,4],[8,5],[8,6],[8,7],[8,8],[8,9],[7,4],[7,5],[7,6],[7,7],[7,8],[7,9],[6,5],[6,6],[6,7],[6,8],[6,9]];
-            const pair = pairs[randInt(0, pairs.length-1)];
-            q = `${pair[0]} + ${pair[1]}`;
-            a = pair[0] + pair[1];
-          } else if (t < 0.7) {
-            // 받아내림 뺄셈
-            const pairs = [[12,3],[12,4],[12,5],[12,6],[12,7],[12,8],[12,9],[13,4],[13,5],[13,6],[13,7],[13,8],[13,9],[14,5],[14,6],[14,7],[14,8],[14,9],[15,6],[15,7],[15,8],[15,9],[16,7],[16,8],[16,9],[17,8],[17,9],[18,9]];
-            const pair = pairs[randInt(0, pairs.length-1)];
-            q = `${pair[0]} - ${pair[1]}`;
-            a = pair[0] - pair[1];
-          } else {
-            // 한 자리 곱셈
-            const pairs = [[2,2],[2,3],[2,4],[2,5],[3,3],[3,4],[3,5],[4,4],[4,5],[5,5],[2,6],[2,7],[2,8],[2,9],[3,6],[3,7],[3,8],[3,9],[4,6],[4,7]];
-            const pair = pairs[randInt(0, pairs.length-1)];
-            q = `${pair[0]} × ${pair[1]}`;
-            a = pair[0] * pair[1];
-          }
-        } else if (age >= 9 && age <= 10) {
-          // 9-10세: 두 자리 사칙연산, 구구단
-          const t = Math.random();
-          if (t < 0.25) {
-            // 두 자리 덧셈
-            const pairs = [[25,17],[34,28],[46,35],[57,24],[38,46],[29,33],[47,25],[56,38]];
-            const pair = pairs[randInt(0, pairs.length-1)];
-            q = `${pair[0]} + ${pair[1]}`;
-            a = pair[0] + pair[1];
-          } else if (t < 0.5) {
-            // 두 자리 뺄셈
-            const pairs = [[52,25],[63,37],[74,48],[85,59],[61,34],[72,45],[83,56],[94,67]];
-            const pair = pairs[randInt(0, pairs.length-1)];
-            q = `${pair[0]} - ${pair[1]}`;
-            a = pair[0] - pair[1];
-          } else if (t < 0.75) {
-            // 구구단
-            const pairs = [[6,7],[7,8],[8,9],[6,8],[7,9],[6,9],[7,7],[8,8],[9,9],[4,6],[4,7],[4,8],[4,9],[5,6],[5,7],[5,8],[5,9]];
-            const pair = pairs[randInt(0, pairs.length-1)];
-            q = `${pair[0]} × ${pair[1]}`;
-            a = pair[0] * pair[1];
-          } else {
-            // 기본 나눗셈
-            const problems = [[24,3],[24,4],[24,6],[24,8],[28,4],[28,7],[32,4],[32,8],[35,5],[35,7],[42,6],[42,7],[45,5],[45,9],[48,6],[48,8]];
-            const prob = problems[randInt(0, problems.length-1)];
-            q = `${prob[0]} ÷ ${prob[1]}`;
-            a = prob[0] / prob[1];
-          }
-        } else {
-          // 11-13세: 세 자리 수, 복합 계산
-          const complex = Math.random() < 0.3;
-          if (!complex) {
-            const t = Math.random();
-            if (t < 0.25) {
-              // 세 자리 덧셈
-              const pairs = [[156,278],[249,167],[378,245],[467,356],[189,234],[295,378],[346,289],[457,168]];
-              const pair = pairs[randInt(0, pairs.length-1)];
-              q = `${pair[0]} + ${pair[1]}`;
-              a = pair[0] + pair[1];
-            } else if (t < 0.5) {
-              // 세 자리 뺄셈
-              const pairs = [[456,189],[523,267],[634,278],[745,389],[512,145],[623,256],[734,367],[845,478]];
-              const pair = pairs[randInt(0, pairs.length-1)];
-              q = `${pair[0]} - ${pair[1]}`;
-              a = pair[0] - pair[1];
-            } else if (t < 0.75) {
-              // 두 자리×한 자리
-              const pairs = [[23,4],[34,5],[45,6],[56,7],[67,8],[78,9],[12,8],[13,9]];
-              const pair = pairs[randInt(0, pairs.length-1)];
-              q = `${pair[0]} × ${pair[1]}`;
-              a = pair[0] * pair[1];
-            } else {
-              // 두 자리÷한 자리
-              const problems = [[84,6],[96,8],[75,5],[91,7],[84,7],[88,4],[92,4],[87,3],[95,5]];
-              const prob = problems[randInt(0, problems.length-1)];
-              if (prob[0] % prob[1] === 0) {
-                q = `${prob[0]} ÷ ${prob[1]}`;
-                a = prob[0] / prob[1];
-              } else {
-                q = `${prob[0]} ÷ ${prob[1]}`;
-                a = Math.floor(prob[0] / prob[1]);
-              }
-            }
-          } else {
-            // 복합계산
-            const patterns = [
-              [[12,25,3], (a,b,c) => `(${a} + ${b}) × ${c}`, (a,b,c) => (a+b)*c],
-              [[4,18,7], (a,b,c) => `${a} × (${b} + ${c})`, (a,b,c) => a*(b+c)],
-              [[145,67,35], (a,b,c) => `(${a} - ${b}) + ${c}`, (a,b,c) => (a-b)+c],
-              [[28,4,6], (a,b,c) => `${a} + ${b} × ${c}`, (a,b,c) => a+(b*c)],
-              [[5,16,23], (a,b,c) => `${a} × ${b} - ${c}`, (a,b,c) => (a*b)-c],
-              [[72,6,19], (a,b,c) => `${a} ÷ ${b} + ${c}`, (a,b,c) => (a/b)+c]
-            ];
-            const pattern = patterns[randInt(0, patterns.length-1)];
-            q = pattern[1](pattern[0][0], pattern[0][1], pattern[0][2]);
-            a = pattern[2](pattern[0][0], pattern[0][1], pattern[0][2]);
-          }
-        }
-        
-        arr.push({q: q, a: a});
-      }
-      
-      return arr.sort(() => Math.random() - 0.5);
-    }
 
     // 결과 메시지 함수
     function getResultMsg(rate) {
